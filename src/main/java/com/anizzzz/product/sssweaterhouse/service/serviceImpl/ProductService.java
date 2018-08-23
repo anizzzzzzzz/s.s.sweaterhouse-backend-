@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 
 @Service
 public class ProductService implements IProductService {
@@ -110,7 +112,7 @@ public class ProductService implements IProductService {
     public Page<ProductResponse> findAllByType(Pageable pageable, String type) throws IOException {
         Page<Product> products=productRepository.findAllByTypeOrderByCreatedDateDesc(pageable,type);
         List<ProductResponse> productResponses=createProductList(products);
-        return new PageImpl<>(productResponses, pageable, productResponses.size());
+        return returePage(products,productResponses);
     }
 
     @Override
@@ -211,5 +213,90 @@ public class ProductService implements IProductService {
             );
         }
         return productResponses;
+    }
+
+    private Page<ProductResponse> returePage(Page<Product> page,List<ProductResponse> productResponses){
+        return new Page<ProductResponse>() {
+            @Override
+            public int getTotalPages() {
+                return page.getTotalPages();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return page.getTotalElements();
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super ProductResponse, ? extends U> function) {
+                return null;
+            }
+
+            @Override
+            public int getNumber() {
+                return page.getNumber();
+            }
+
+            @Override
+            public int getSize() {
+                return page.getSize();
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return page.getNumberOfElements();
+            }
+
+            @Override
+            public List<ProductResponse> getContent() {
+                return productResponses;
+            }
+
+            @Override
+            public boolean hasContent() {
+                return page.hasContent();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return page.isFirst();
+            }
+
+            @Override
+            public boolean isLast() {
+                return page.isLast();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return page.hasNext();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return page.hasPrevious();
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public Iterator<ProductResponse> iterator() {
+                return null;
+            }
+        };
+
     }
 }
