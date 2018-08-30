@@ -29,10 +29,11 @@ public class ProductController {
     @PostMapping("/upload-images")
     public ResponseMessage uploadImages(@RequestParam("images") MultipartFile[] images,
                                         @RequestParam("type") String type,
-                                        @RequestParam("price") String price,
-                                        @RequestParam("sale") String sale,
-                                        @RequestParam("size") String size) throws IOException {
-        return iProductService.Save(images, type, Double.parseDouble(price) ,Boolean.parseBoolean(sale),size);
+                                        @RequestParam("price") Double price,
+                                        @RequestParam("sale") Boolean sale,
+                                        @RequestParam("size") String[] size,
+                                        @RequestParam("selectedImage") String selectedImage) throws IOException {
+        return iProductService.Save(images, type, price ,sale,size,selectedImage);
     }
 
     @GetMapping("/find-all")

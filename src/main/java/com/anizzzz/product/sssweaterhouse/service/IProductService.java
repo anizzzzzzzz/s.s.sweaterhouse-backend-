@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
-    ResponseMessage Save(MultipartFile[] images, String type, double price, boolean sale, String size) throws IOException;
+    ResponseMessage Save(MultipartFile[] images, String type, double price, boolean sale, String[] size, String selectedImage)
+            throws IOException;
 
     Optional<Product> findOne(Long id);
 

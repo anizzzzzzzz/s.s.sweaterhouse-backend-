@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService implements IProductService {
@@ -43,12 +45,11 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ResponseMessage Save(MultipartFile[] images, String type, double price, boolean sale, String size){
+    public ResponseMessage Save(MultipartFile[] images, String type, double price, boolean sale, String[] size, String selectedImage){
         List<ProductInfo> productInfos=new ArrayList<>();
         List<ProductSize> sizes=new ArrayList<>();
 
-        String[] sizeArr= size.split("\\,");
-        Arrays.stream(sizeArr).forEach(sz->{
+        Arrays.stream(size).forEach(sz->{
             sizes.add(iProductSizeService.findBySize(sz));
         });
 
@@ -58,8 +59,13 @@ public class ProductService implements IProductService {
         for(MultipartFile image:images) {
             try{
                 String extension = image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
-                if(extension.equalsIgnoreCase("jpeg") || extension.equalsIgnoreCase("png") || extension.equalsIgnoreCase("jpg"))
-                {
+                if(extension.equalsIgnoreCase("jpeg") ||
+                        extension.equalsIgnoreCase("png") ||
+                        extension.equalsIgnoreCase("jpg")) {
+                    boolean isSelected=false;
+                    if(selectedImage.equalsIgnoreCase(image.getOriginalFilename())){
+                        isSelected=true;
+                    }
                     String fileNameWithExt = getRandomFileName(extension);
                     String fileName = fileNameWithExt.substring(0,fileNameWithExt.lastIndexOf('.'));
                     File imageFolder = new File(folderLocation);
@@ -71,7 +77,7 @@ public class ProductService implements IProductService {
                     File file = new File(fileLocation);
 
                     image.transferTo(file);
-                    productInfos.add(new ProductInfo(fileName,extension,imageType(extension),fileLocation));
+                    productInfos.add(new ProductInfo(fileName,extension,imageType(extension),fileLocation,isSelected));
                 }
                 else{
                     throw new ExtensionMismatchException();
@@ -203,7 +209,14 @@ public class ProductService implements IProductService {
         List<ProductResponse> productResponses=new ArrayList<>();
 
         for(Product product:products.getContent()){
-            ProductInfo proInfo = product.getProductInfos().stream().findFirst().get();
+            ProductInfo proInfo = product.getProductInfos().stream().
+                    filter(productInfo -> productInfo.isHighlight()).
+                    collect(toSingleton());
+
+            if(proInfo == null){
+                proInfo=product.getProductInfos().stream().findFirst().get();
+            }
+
             productResponses.add(
                     new ProductResponse(
                             product.getProductCode(),
@@ -296,5 +309,12 @@ public class ProductService implements IProductService {
                 return null;
             }
         };
+    }
+
+    public static <T> Collector<T, ?, T> toSingleton() {
+        return Collectors.collectingAndThen(
+                Collectors.toList(),
+                list -> list.size() == 1 ? list.get(0) : null
+        );
     }
 }

@@ -27,11 +27,4 @@ public class ProductInfo {
         this.location=location;
         this.highlight=highlight;
     }
-
-    public ProductInfo(String name, String extension,String type, String location){
-        this.name=name;
-        this.type=type;
-        this.extension=extension;
-        this.location=location;
-    }
 }
