@@ -17,7 +17,7 @@ public interface IProductService {
 
     Optional<Product> findOne(Long id);
 
-    Optional<Product> findByProductCode(String productCode);
+    ResponseMessage findByProductCode(String productCode);
 
     List<Product> findAllByType(String type);
 

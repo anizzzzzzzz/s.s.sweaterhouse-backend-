@@ -2,6 +2,7 @@ package com.anizzzz.product.sssweaterhouse.exceptionHandling.advice;
 
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.dto.ApiError;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ExtensionMismatchException;
+import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ProductException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +180,7 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
     public ResponseEntity<ApiError> handleUserNotFoundException(final Exception ex) {
         logger.error(ex.getClass().getName());
         logger.error(ex.getMessage());
-        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "User not found.");
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "UserRole not found.");
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
@@ -188,6 +189,14 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
         logger.error(ex.getClass().getName());
         logger.error(ex.getMessage());
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "Can only save image with jpeg/png extension.");
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
+    @ExceptionHandler({ProductException.class})
+    public ResponseEntity<ApiError> handleProductexception(final Exception ex) {
+        logger.error(ex.getClass().getName());
+        logger.error(ex.getMessage());
+        final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), "Can only save image with jpeg/png extension.");
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 

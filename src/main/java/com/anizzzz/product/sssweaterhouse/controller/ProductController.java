@@ -45,4 +45,10 @@ public class ProductController {
     public ResponseEntity<?> findAllByType(Pageable pageable, @RequestParam String type) throws IOException{
         return ResponseEntity.ok(iProductService.findAllByType(pageable,type));
     }
+
+    @PostMapping("/find-one")
+    public ResponseEntity<?> findOneProduct(@RequestParam String productCode){
+        ResponseMessage responseMessage=iProductService.findByProductCode(productCode);
+        return new ResponseEntity<Object>(responseMessage, responseMessage.getHttpStatus());
+    }
 }

@@ -84,7 +84,7 @@ public class ProductService implements IProductService {
                 }
             }
             catch (IOException ex){
-                throw new ProductException();
+                throw new ProductException("Problem occured while saving product.",ex);
             }
             catch (ExtensionMismatchException ex){
                 throw new ExtensionMismatchException();
@@ -100,8 +100,12 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Optional<Product> findByProductCode(String productCode) {
-        return null;
+    public ResponseMessage findByProductCode(String productCode) {
+        Optional<Product> product=productRepository.findByProductCode(productCode);
+
+        return product.map(this::findSelectedProduct).
+                orElseGet(() ->
+                        new ResponseMessage("Cannot find product with specified product code", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -311,7 +315,36 @@ public class ProductService implements IProductService {
         };
     }
 
-    public static <T> Collector<T, ?, T> toSingleton() {
+    private ResponseMessage findSelectedProduct(Product product){
+        List<HashMap<String,Object>> images=new ArrayList<>();
+
+        product.getProductInfos().forEach(image->{
+            HashMap<String,Object> imagesInfo=new HashMap<>();
+            try {
+                imagesInfo.put("name",image.getName());
+                imagesInfo.put("type",image.getType());
+                imagesInfo.put("extension",image.getExtension());
+                imagesInfo.put("image",IOUtils.toByteArray(FileUtils.openInputStream(new File(image.getLocation()))));
+                imagesInfo.put("highlighted",image.isHighlight());
+                images.add(imagesInfo);
+            } catch (IOException e) {
+                throw new ProductException("Error occured while fetching product",e);
+            }
+        });
+
+        return new ResponseMessage("Successfully fetched product",
+                    new ProductResponse(
+                            product.getProductCode(),
+                            product.getType(),
+                            product.getPrice(),
+                            product.getSize(),
+                            images
+                    ),
+                    HttpStatus.OK
+                );
+    }
+
+    private static <T> Collector<T, ?, T> toSingleton() {
         return Collectors.collectingAndThen(
                 Collectors.toList(),
                 list -> list.size() == 1 ? list.get(0) : null
