@@ -1,6 +1,7 @@
 package com.anizzzz.product.sssweaterhouse.exceptionHandling.advice;
 
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.dto.ApiError;
+import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.EmailException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ExtensionMismatchException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ProductException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.UserNotFoundException;
@@ -197,6 +198,14 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
         logger.error(ex.getClass().getName());
         logger.error(ex.getMessage());
         final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), "Can only save image with jpeg/png extension.");
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
+    @ExceptionHandler({EmailException.class})
+    public ResponseEntity<ApiError> handleEmailException(final Exception ex) {
+        logger.error(ex.getClass().getName());
+        logger.error(ex.getMessage());
+        final ApiError apiError = new ApiError(HttpStatus.REQUEST_TIMEOUT, ex.getMessage(), "Can only save image with jpeg/png extension.");
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 

@@ -17,6 +17,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
     private String productCode;
     private String type;
     private double price;
@@ -34,13 +35,15 @@ public class Product {
     @OneToMany(targetEntity = ProductInfo.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<ProductInfo> productInfos;
 
-    public Product(String productCode,
+    public Product(String name,
+                   String productCode,
                    String type,
                    double price,
                    boolean sale,
                    Date createdDate,
                    List<ProductSize> size,
                    List<ProductInfo> productInfos){
+        this.name=name;
         this.productCode=productCode;
         this.type=type;
         this.price=price;

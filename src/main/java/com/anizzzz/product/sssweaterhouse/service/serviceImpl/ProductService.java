@@ -45,7 +45,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ResponseMessage Save(MultipartFile[] images, String type, double price, boolean sale, String[] size, String selectedImage){
+    public ResponseMessage Save(MultipartFile[] images,String name, String type, double price, boolean sale, String[] size, String selectedImage){
         List<ProductInfo> productInfos=new ArrayList<>();
         List<ProductSize> sizes=new ArrayList<>();
 
@@ -56,6 +56,7 @@ public class ProductService implements IProductService {
         String folderLocation=System.getProperty("user.dir") + "\\images\\"+type;
 
         String productCode=getProductCode(type);
+        int i=0;
         for(MultipartFile image:images) {
             try{
                 String extension = image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
@@ -63,8 +64,13 @@ public class ProductService implements IProductService {
                         extension.equalsIgnoreCase("png") ||
                         extension.equalsIgnoreCase("jpg")) {
                     boolean isSelected=false;
-                    if(selectedImage.equalsIgnoreCase(image.getOriginalFilename())){
-                        isSelected=true;
+                    if(selectedImage!=null){
+                        if(selectedImage.equalsIgnoreCase(image.getOriginalFilename()))
+                            isSelected=true;
+                    }
+                    else {
+                        if(i==0)
+                            isSelected=true;
                     }
                     String fileNameWithExt = getRandomFileName(extension);
                     String fileName = fileNameWithExt.substring(0,fileNameWithExt.lastIndexOf('.'));
@@ -78,6 +84,7 @@ public class ProductService implements IProductService {
 
                     image.transferTo(file);
                     productInfos.add(new ProductInfo(fileName,extension,imageType(extension),fileLocation,isSelected));
+                    i++;
                 }
                 else{
                     throw new ExtensionMismatchException();
@@ -90,7 +97,7 @@ public class ProductService implements IProductService {
                 throw new ExtensionMismatchException();
             }
         }
-        productRepository.save(new Product(productCode,type,price,sale,new Date(),sizes,productInfos));
+        productRepository.save(new Product(name, productCode,type,price,sale,new Date(),sizes,productInfos));
         return new ResponseMessage("Product have been saved successfully.", HttpStatus.OK);
     }
 
@@ -120,7 +127,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> findAllBySale(Pageable pageable, boolean sale) throws IOException {
+    public Page<ProductResponse> findAllBySale(Pageable pageable) throws IOException {
         Page<Product> products=productRepository.findAllBySaleOrderByCreatedDateDesc(pageable,true);
         return getProductResponse(products);
     }
@@ -223,6 +230,7 @@ public class ProductService implements IProductService {
 
             productResponses.add(
                     new ProductResponse(
+                            product.getName(),
                             product.getProductCode(),
                             product.getType(),
                             product.getPrice(),
@@ -334,6 +342,7 @@ public class ProductService implements IProductService {
 
         return new ResponseMessage("Successfully fetched product",
                     new ProductResponse(
+                            product.getName(),
                             product.getProductCode(),
                             product.getType(),
                             product.getPrice(),

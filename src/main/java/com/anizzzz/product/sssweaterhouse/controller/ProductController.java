@@ -28,12 +28,13 @@ public class ProductController {
 
     @PostMapping("/upload-images")
     public ResponseMessage uploadImages(@RequestParam("images") MultipartFile[] images,
+                                        @RequestParam("name") String name,
                                         @RequestParam("type") String type,
                                         @RequestParam("price") Double price,
                                         @RequestParam("sale") Boolean sale,
                                         @RequestParam("size") String[] size,
                                         @RequestParam("selectedImage") String selectedImage) throws IOException {
-        return iProductService.Save(images, type, price ,sale,size,selectedImage);
+        return iProductService.Save(images, name, type, price ,sale,size,selectedImage);
     }
 
     @GetMapping("/find-all")
@@ -50,5 +51,10 @@ public class ProductController {
     public ResponseEntity<?> findOneProduct(@RequestParam String productCode){
         ResponseMessage responseMessage=iProductService.findByProductCode(productCode);
         return new ResponseEntity<Object>(responseMessage, responseMessage.getHttpStatus());
+    }
+
+    @GetMapping("/find-all-sales")
+    public ResponseEntity<?> findAllSales(Pageable pageable) throws IOException{
+        return ResponseEntity.ok(iProductService.findAllBySale(pageable));
     }
 }

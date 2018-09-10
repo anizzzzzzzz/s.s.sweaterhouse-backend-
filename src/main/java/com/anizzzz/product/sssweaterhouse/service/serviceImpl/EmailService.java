@@ -3,6 +3,7 @@ package com.anizzzz.product.sssweaterhouse.service.serviceImpl;
 import com.anizzzz.product.sssweaterhouse.service.IEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
@@ -21,7 +22,8 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public void SendMail(String username, String subject, String message) throws MessagingException, UnsupportedEncodingException {
+    @Async
+    public void sendMail(String username, String subject, String message) throws MessagingException, UnsupportedEncodingException {
         MimeMessage msg=javaMailSender.createMimeMessage();
         msg.setFrom(new InternetAddress("S.S.SweaterHouse","S.S.Sweaterhouse","UTF-*"));
         msg.setRecipient(Message.RecipientType.TO,new InternetAddress(username));

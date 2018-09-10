@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,8 +27,8 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<?> save(@RequestBody User user){
-        ResponseMessage message=iUserService.save(user);
+    public ResponseEntity<?> save(@RequestBody User user, HttpServletRequest request){
+        ResponseMessage message=iUserService.save(user, request);
         return new ResponseEntity<>(message, message.getHttpStatus());
     }
 
@@ -55,7 +56,7 @@ public class UserController {
         return new ResponseEntity<>(message,message.getHttpStatus());
     }
 
-    @PostMapping("/user/activate-user")
+    @GetMapping("/user/activate-user")
     public ResponseEntity<?> activateUser(@RequestParam String token){
         ResponseMessage message=iUserService.activateUser(token);
 

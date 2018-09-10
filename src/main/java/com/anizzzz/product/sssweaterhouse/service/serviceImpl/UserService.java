@@ -1,40 +1,51 @@
 package com.anizzzz.product.sssweaterhouse.service.serviceImpl;
 
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
+import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.EmailException;
 import com.anizzzz.product.sssweaterhouse.model.PasswordResetToken;
 import com.anizzzz.product.sssweaterhouse.model.User;
 import com.anizzzz.product.sssweaterhouse.model.VerificationToken;
 import com.anizzzz.product.sssweaterhouse.repository.UserRepository;
-import com.anizzzz.product.sssweaterhouse.service.IPasswordResetService;
-import com.anizzzz.product.sssweaterhouse.service.IRoleService;
-import com.anizzzz.product.sssweaterhouse.service.IUserService;
-import com.anizzzz.product.sssweaterhouse.service.IVerificationTokenService;
+import com.anizzzz.product.sssweaterhouse.service.*;
 import com.anizzzz.product.sssweaterhouse.utils.TokenExpirationUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import static com.anizzzz.product.sssweaterhouse.utils.TokenExpirationUtils.setTokenExpirationDate;
 
 @Service
 public class UserService implements IUserService {
+    @Value("${frontend.port}")
+    private String frontPort;
+
+    private Logger logger= LoggerFactory.getLogger(UserService.class);
+
     private static final int EXPIRATION = 60*24;
     private final UserRepository userRepository;
     private final IRoleService iRoleService;
     private final IVerificationTokenService iVerificationTokenService;
     private final IPasswordResetService iPasswordResetService;
+    private final IEmailService iEmailService;
 
     @Autowired
-    public UserService(UserRepository userRepository, IRoleService iRoleService, IVerificationTokenService iVerificationTokenService, IPasswordResetService iPasswordResetService) {
+    public UserService(UserRepository userRepository, IRoleService iRoleService, IVerificationTokenService iVerificationTokenService, IPasswordResetService iPasswordResetService, IEmailService iEmailService) {
         this.userRepository = userRepository;
         this.iRoleService = iRoleService;
         this.iVerificationTokenService = iVerificationTokenService;
         this.iPasswordResetService = iPasswordResetService;
+        this.iEmailService = iEmailService;
     }
 
     @Override
@@ -48,7 +59,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseMessage save(User user) {
+    public ResponseMessage save(User user, HttpServletRequest request) {
         Optional<User> user1=userRepository.findByUsername(user.getUsername().toLowerCase());
         if(user1.isPresent()){
             return new ResponseMessage(
@@ -66,6 +77,24 @@ public class UserService implements IUserService {
                     setTokenExpirationDate(EXPIRATION),
                     user));
             userRepository.save(user);
+
+            String subject = "Account Confirmation";
+            StringBuilder body=new StringBuilder();
+            body.append("Welcome,<br/>Your user account with the e-mail address <strong>")
+                .append(user.getUsername())
+                .append("</strong> has been created.<br/>")
+                .append("Please follow the link below to activate your account. The link will remain valid for 24 hrs. <br/>")
+                .append("<a href=\"")
+                .append(getServerAddress(request)).append("/user/activate-user?token=")
+                .append(user.getVerificationToken().getToken())
+                .append("\">Activate account</a><br/>");
+
+            try {
+                iEmailService.sendMail(user.getUsername(),subject, body.toString());
+            } catch (Exception e) {
+                logger.error("Error sending email: "+e.getMessage());
+                throw new EmailException("Cannot Send Email to "+user.getUsername(), e);
+            }
             return new ResponseMessage(
                     user.getUsername()+" has been successfully registered.",
                     HttpStatus.OK
@@ -232,5 +261,12 @@ public class UserService implements IUserService {
             randUid=UUID.randomUUID().toString();
         }
         return randUid;
+    }
+
+    private String getServerAddress(HttpServletRequest request){
+        //For Frontend
+//        return request.getScheme() + "://" + request.getServerName() + ":" + frontPort;
+        //For Server
+        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
     }
 }

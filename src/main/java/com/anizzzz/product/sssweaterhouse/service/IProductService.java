@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
-    ResponseMessage Save(MultipartFile[] images, String type, double price, boolean sale, String[] size, String selectedImage)
+    ResponseMessage Save(MultipartFile[] images,String name, String type, double price, boolean sale, String[] size, String selectedImage)
             throws IOException;
 
     Optional<Product> findOne(Long id);
@@ -23,7 +23,7 @@ public interface IProductService {
 
     Page<ProductResponse> findAll(Pageable pageable) throws IOException;
 
-    Page<ProductResponse> findAllBySale(Pageable pageable, boolean sale) throws IOException;
+    Page<ProductResponse> findAllBySale(Pageable pageable) throws IOException;
 
     Page<ProductResponse> findAllByType(Pageable pageable, String type) throws IOException;
 

@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ProductResponse {
+    private String name;
     private String productCode;
     private String type;
     private double price;
@@ -22,12 +23,14 @@ public class ProductResponse {
     private String imageType;
     private List<HashMap<String,Object>> images;
 
-    public ProductResponse(String productCode,
+    public ProductResponse(String name,
+                           String productCode,
                            String type,
                            double price,
                            List<ProductSize> size,
                            byte[] image,
                            String imageType){
+        this.name=name;
         this.productCode=productCode;
         this.type=type;
         this.price=price;
@@ -36,12 +39,14 @@ public class ProductResponse {
         this.imageType=imageType;
     }
 
-    public ProductResponse(String productCode,
+    public ProductResponse(String name,
+                           String productCode,
                            String type,
                            double price,
                            List<ProductSize> size,
                            List<HashMap<String,Object>> images
                            ){
+        this.name=name;
         this.productCode=productCode;
         this.type=type;
         this.price=price;
