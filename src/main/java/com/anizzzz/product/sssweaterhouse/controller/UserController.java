@@ -50,8 +50,8 @@ public class UserController {
     }
 
     @PostMapping("/user/resend-token")
-    public ResponseEntity<?> resendVerificationToken(@RequestParam String username){
-        ResponseMessage message=iUserService.resendVerificationToken(username);
+    public ResponseEntity<?> resendVerificationToken(@RequestParam String username, HttpServletRequest request){
+        ResponseMessage message=iUserService.resendVerificationToken(username, request);
 
         return new ResponseEntity<>(message,message.getHttpStatus());
     }
@@ -64,8 +64,8 @@ public class UserController {
     }
 
     @PostMapping("/user/send-reset-password-token")
-    public ResponseEntity<?> resettingPassword(@RequestParam String username){
-        ResponseMessage message=iUserService.sendResetPasswordToken(username);
+    public ResponseEntity<?> resettingPassword(@RequestParam String username, HttpServletRequest request){
+        ResponseMessage message=iUserService.sendResetPasswordToken(username, request);
 
         return new ResponseEntity<>(message, message.getHttpStatus());
     }

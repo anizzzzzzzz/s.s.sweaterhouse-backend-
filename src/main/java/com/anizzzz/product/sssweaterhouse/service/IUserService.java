@@ -15,11 +15,11 @@ public interface IUserService {
 
     ResponseMessage save(User user, HttpServletRequest request);
 
-    ResponseMessage resendVerificationToken(String username);
+    ResponseMessage resendVerificationToken(String username, HttpServletRequest request);
 
     ResponseMessage activateUser(String token);
 
-    ResponseMessage sendResetPasswordToken(String username);
+    ResponseMessage sendResetPasswordToken(String username, HttpServletRequest request);
 
     ResponseMessage resetUserPassword(String token, String username,String password);
 }

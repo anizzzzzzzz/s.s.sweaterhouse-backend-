@@ -11,6 +11,7 @@ import com.anizzzz.product.sssweaterhouse.repository.ProductRepository;
 import com.anizzzz.product.sssweaterhouse.service.IProductInfoService;
 import com.anizzzz.product.sssweaterhouse.service.IProductService;
 import com.anizzzz.product.sssweaterhouse.service.IProductSizeService;
+import com.anizzzz.product.sssweaterhouse.utils.ICompresserUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +33,18 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService implements IProductService {
     private final ProductRepository productRepository;
-
     private final IProductInfoService iProductInfoService;
-
     private final IProductSizeService iProductSizeService;
+    private final ICompresserUtils jpgCompresser;
+    private final ICompresserUtils pngCompresser;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, IProductInfoService iProductInfoService, IProductSizeService iProductSizeService) {
+    public ProductService(ProductRepository productRepository, IProductInfoService iProductInfoService, IProductSizeService iProductSizeService, ICompresserUtils jpgCompresser, ICompresserUtils pngCompresser) {
         this.productRepository = productRepository;
         this.iProductInfoService = iProductInfoService;
         this.iProductSizeService = iProductSizeService;
+        this.jpgCompresser = jpgCompresser;
+        this.pngCompresser = pngCompresser;
     }
 
     @Override
@@ -80,9 +83,15 @@ public class ProductService implements IProductService {
                         imageFolder.mkdirs();
 
                     String fileLocation = folderLocation+ "\\" + fileNameWithExt;
-                    File file = new File(fileLocation);
+                    /*File file = new File(fileLocation);
 
-                    image.transferTo(file);
+                    image.transferTo(file);*/
+                    if(extension.equalsIgnoreCase("jpg")) {
+                        jpgCompresser.compressImages(image.getInputStream(), fileLocation);
+                    }
+                    else if(extension.equalsIgnoreCase("png")) {
+                        pngCompresser.compressImages(image.getInputStream(), fileLocation);
+                    }
                     productInfos.add(new ProductInfo(fileName,extension,imageType(extension),fileLocation,isSelected));
                     i++;
                 }

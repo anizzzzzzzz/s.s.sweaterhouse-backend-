@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -103,7 +104,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseMessage resendVerificationToken(String username) {
+    public ResponseMessage resendVerificationToken(String username, HttpServletRequest request) {
         Optional<User> optional=findByUsername(username.toLowerCase());
         if(optional.isPresent()){
             if(!optional.get().isActive()) {
@@ -111,6 +112,23 @@ public class UserService implements IUserService {
                 verificationToken.setToken(randUUIDToken());
                 verificationToken.setExpiryDate(setTokenExpirationDate(EXPIRATION));
                 iVerificationTokenService.save(verificationToken);
+
+                String subject = "Resend Verification Token";
+                StringBuilder body=new StringBuilder();
+                body.append("Hi "+optional.get().getFirstname()+",<br/>")
+                        .append("Please follow the link below to activate your account. The link will remain valid for 24 hrs. <br/>")
+                        .append("<a href=\"")
+                        .append(getServerAddress(request)).append("/user/activate-user?token=")
+                        .append(optional.get().getVerificationToken().getToken())
+                        .append("\">Activate account</a><br/>");
+
+                try {
+                    iEmailService.sendMail(optional.get().getUsername(),subject, body.toString());
+                } catch (Exception e) {
+                    logger.error("Error sending email: "+e.getMessage());
+                    throw new EmailException("Cannot Send Email to "+optional.get().getUsername(), e);
+                }
+
                 return new ResponseMessage(
                         "Verification Code has been send to your email : " + username.toLowerCase(),
                         HttpStatus.OK
@@ -167,7 +185,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseMessage sendResetPasswordToken(String username) {
+    public ResponseMessage sendResetPasswordToken(String username, HttpServletRequest request) {
         Optional<User> optional=findByUsername(username.toLowerCase());
 
         if(optional.isPresent()){

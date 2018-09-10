@@ -1,5 +1,8 @@
 package com.anizzzz.product.sssweaterhouse.config;
 
+import com.anizzzz.product.sssweaterhouse.utils.ICompresserUtils;
+import com.anizzzz.product.sssweaterhouse.utils.impl.JpgCompresserUtil;
+import com.anizzzz.product.sssweaterhouse.utils.impl.PngCompresserUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -19,5 +22,15 @@ public class Webconfig implements WebMvcConfigurer {
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD");
             }
         };
+    }
+
+    @Bean
+    public ICompresserUtils jpgCompresser(){
+        return new JpgCompresserUtil();
+    }
+
+    @Bean
+    public ICompresserUtils pngCompresser(){
+        return new PngCompresserUtil();
     }
 }
