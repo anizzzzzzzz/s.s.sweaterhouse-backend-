@@ -1,11 +1,14 @@
 package com.anizzzz.product.sssweaterhouse.config;
 
+import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtTokenUtil;
+import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtUserFactory;
 import com.anizzzz.product.sssweaterhouse.utils.ICompresserUtils;
 import com.anizzzz.product.sssweaterhouse.utils.impl.JpgCompresserUtil;
 import com.anizzzz.product.sssweaterhouse.utils.impl.PngCompresserUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -33,4 +36,10 @@ public class Webconfig implements WebMvcConfigurer {
     public ICompresserUtils pngCompresser(){
         return new PngCompresserUtil();
     }
+
+    @Bean
+    public JwtTokenUtil jwtTokenUtil(){return new JwtTokenUtil();}
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder(){return new BCryptPasswordEncoder();}
 }

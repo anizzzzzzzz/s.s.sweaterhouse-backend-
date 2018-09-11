@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -39,14 +40,21 @@ public class UserService implements IUserService {
     private final IVerificationTokenService iVerificationTokenService;
     private final IPasswordResetService iPasswordResetService;
     private final IEmailService iEmailService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, IRoleService iRoleService, IVerificationTokenService iVerificationTokenService, IPasswordResetService iPasswordResetService, IEmailService iEmailService) {
+    public UserService(UserRepository userRepository,
+                       IRoleService iRoleService,
+                       IVerificationTokenService iVerificationTokenService,
+                       IPasswordResetService iPasswordResetService,
+                       IEmailService iEmailService,
+                       BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.iRoleService = iRoleService;
         this.iVerificationTokenService = iVerificationTokenService;
         this.iPasswordResetService = iPasswordResetService;
         this.iEmailService = iEmailService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -70,6 +78,7 @@ public class UserService implements IUserService {
         }
         else{
             user.setUsername(user.getUsername().toLowerCase());
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             user.setRoles(Arrays.asList(iRoleService.findOne(3)));
             user.setCreatedDate(new Date());
             user.setActive(false);

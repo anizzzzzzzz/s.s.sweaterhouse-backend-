@@ -56,11 +56,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name="role_id"))
     private List<Role> roles;
 
-    @OneToOne(targetEntity = VerificationToken.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(targetEntity = VerificationToken.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "verification_token_id")
     private VerificationToken verificationToken;
 
-    @OneToOne(targetEntity = PasswordResetToken.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(targetEntity = PasswordResetToken.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "password_reset_id")
     private PasswordResetToken passwordResetToken;
 
