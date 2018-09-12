@@ -27,14 +27,15 @@ public class ProductController {
     }
 
     @PostMapping("/upload-images")
-    public ResponseMessage uploadImages(@RequestParam("images") MultipartFile[] images,
+    public ResponseEntity<?> uploadImages(@RequestParam("images") MultipartFile[] images,
                                         @RequestParam("name") String name,
                                         @RequestParam("type") String type,
                                         @RequestParam("price") Double price,
                                         @RequestParam("sale") Boolean sale,
                                         @RequestParam("size") String[] size,
                                         @RequestParam("selectedImage") String selectedImage) throws IOException {
-        return iProductService.Save(images, name, type, price ,sale,size,selectedImage);
+        ResponseMessage response=iProductService.Save(images, name, type, price ,sale,size,selectedImage);
+        return new ResponseEntity<Object>(response,response.getHttpStatus());
     }
 
     @GetMapping("/find-all")
