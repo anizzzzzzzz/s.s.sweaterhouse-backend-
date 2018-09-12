@@ -5,6 +5,7 @@ import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtUserFactory;
 import com.anizzzz.product.sssweaterhouse.utils.ICompresserUtils;
 import com.anizzzz.product.sssweaterhouse.utils.impl.JpgCompresserUtil;
 import com.anizzzz.product.sssweaterhouse.utils.impl.PngCompresserUtil;
+import com.anizzzz.product.sssweaterhouse.validation.UserValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -42,4 +43,7 @@ public class Webconfig implements WebMvcConfigurer {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){return new BCryptPasswordEncoder();}
+
+    @Bean
+    public UserValidator beforeCreateUserValidator(){return new UserValidator();}
 }

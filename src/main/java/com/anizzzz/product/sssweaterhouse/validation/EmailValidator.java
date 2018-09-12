@@ -7,6 +7,9 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+* Creating Annotation validator that is used in entity (model) ie; @Email
+*/
 public class EmailValidator implements ConstraintValidator<ValidEmail,String> {
     private Pattern pattern;
     private Matcher matcher;

@@ -7,6 +7,9 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+* Creating Annotation validator that is used in entity (model) ie; @Password
+*/
 public class PasswordValidator implements ConstraintValidator<ValidPassword,String> {
     private Pattern pattern;
     private Matcher matcher;

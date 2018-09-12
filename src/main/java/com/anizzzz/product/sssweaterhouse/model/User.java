@@ -1,10 +1,8 @@
 package com.anizzzz.product.sssweaterhouse.model;
 
 import com.anizzzz.product.sssweaterhouse.annotation.ValidEmail;
-import com.anizzzz.product.sssweaterhouse.annotation.ValidPassword;
 import com.anizzzz.product.sssweaterhouse.view.View;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,7 +41,6 @@ public class User {
 
     @NotNull
     @NotEmpty
-    @ValidPassword
     private String password;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
@@ -56,7 +53,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name="role_id"))
     private List<Role> roles;
 
-    @OneToOne(targetEntity = VerificationToken.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(targetEntity = VerificationToken.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "verification_token_id")
     private VerificationToken verificationToken;
 
