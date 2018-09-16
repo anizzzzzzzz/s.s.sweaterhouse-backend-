@@ -1,6 +1,5 @@
 package com.anizzzz.product.sssweaterhouse.service.serviceImpl;
 
-import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.UserNotFoundException;
 import com.anizzzz.product.sssweaterhouse.model.User;
 import com.anizzzz.product.sssweaterhouse.repository.UserRepository;
 import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtUserFactory;
@@ -22,14 +21,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username){
         Optional<User> user = userRepository.findByUsername(username);
 
         if(user.isPresent()){
             return JwtUserFactory.create(user.get());
         }
         else{
-            throw new UserNotFoundException(String.format("No user found with username '%s'.", username));
+            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         }
     }
 }

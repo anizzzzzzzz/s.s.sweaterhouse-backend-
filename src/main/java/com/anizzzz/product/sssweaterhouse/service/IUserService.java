@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public interface IUserService {
-    Page<User> findAll(Pageable pageable);
-
     Optional<User> findByUsername(String username);
 
     ResponseMessage save(User user, HttpServletRequest request);

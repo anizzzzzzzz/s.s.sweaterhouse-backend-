@@ -15,6 +15,8 @@ public class JwtUser implements UserDetails {
     private final Date createdDate;
     private final String firstname;
     private final String lastname;
+    private final Date activatedDate;
+    private final Date passwordStamp;
 
     public JwtUser(Long id,
                    String username,
@@ -23,7 +25,9 @@ public class JwtUser implements UserDetails {
                    boolean enabled,
                    Date createdDate,
                    String firstname,
-                   String lastname){
+                   String lastname,
+                   Date activatedDate,
+                   Date passwordStamp){
         this.id = id;
         this.username = username;
         this.password = password;
@@ -32,6 +36,8 @@ public class JwtUser implements UserDetails {
         this.createdDate = createdDate;
         this.firstname = firstname;
         this.lastname = lastname;
+        this.activatedDate=activatedDate;
+        this.passwordStamp=passwordStamp;
     }
 
     @Override
@@ -74,4 +80,8 @@ public class JwtUser implements UserDetails {
     public String getFirstname(){return firstname;}
 
     public String getLastname(){return lastname;}
+
+    public Date getActivatedDate(){return activatedDate;}
+
+    public Date getPasswordStamp(){return passwordStamp;}
 }

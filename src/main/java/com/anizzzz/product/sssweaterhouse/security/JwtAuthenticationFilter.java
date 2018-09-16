@@ -44,11 +44,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 username = jwtTokenUtil.getUsernameFromToken(authToken);
             }
             catch (IllegalArgumentException ex){
-                logger.error("An error occurred during getting username from token.",ex);
+                logger.error("An error occurred during getting username from token :- ",ex.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
             catch (ExpiredJwtException ex){
-                logger.warn("The token is expired and not valid anymore", ex);
+                logger.warn("The token is expired and not valid anymore :- ", ex.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }

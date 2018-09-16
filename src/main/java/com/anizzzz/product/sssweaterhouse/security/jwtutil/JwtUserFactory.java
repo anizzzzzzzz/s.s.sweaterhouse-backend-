@@ -20,7 +20,9 @@ public class JwtUserFactory {
                 user.isActive(),
                 user.getCreatedDate(),
                 user.getFirstname(),
-                user.getLastname()
+                user.getLastname(),
+                user.getActivatedDate(),
+                user.getPasswordStamp()
         );
     }
 

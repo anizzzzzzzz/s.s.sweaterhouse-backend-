@@ -1,16 +1,14 @@
 package com.anizzzz.product.sssweaterhouse.exceptionHandling.advice;
 
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.dto.ApiError;
-import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.EmailException;
-import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ExtensionMismatchException;
-import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ProductException;
-import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.UserNotFoundException;
+import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -19,7 +17,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -30,7 +27,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -171,17 +167,17 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
             );
         }
         else{
-            logger.error(ex.getClass().getName());
+            logger.error(ex.getClass().getName(), ex);
             final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
             return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
         }
     }
 
-    @ExceptionHandler({UserNotFoundException.class})
+    @ExceptionHandler({UsernameNotFoundException.class})
     public ResponseEntity<ApiError> handleUserNotFoundException(final Exception ex) {
         logger.error(ex.getClass().getName());
         logger.error(ex.getMessage());
-        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "UserRole not found.");
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "User not found.");
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
@@ -205,7 +201,23 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
     public ResponseEntity<ApiError> handleEmailException(final Exception ex) {
         logger.error(ex.getClass().getName());
         logger.error(ex.getMessage());
-        final ApiError apiError = new ApiError(HttpStatus.REQUEST_TIMEOUT, ex.getMessage(), "Can only save image with jpeg/png extension.");
+        final ApiError apiError = new ApiError(HttpStatus.REQUEST_TIMEOUT, ex.getMessage(), "Error while sending email.");
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
+    @ExceptionHandler({AccountNotActivatedException.class})
+    public ResponseEntity<ApiError> handleAccountNotActivateException(final Exception ex) {
+        logger.error(ex.getClass().getName());
+        logger.error(ex.getMessage());
+        final ApiError apiError = new ApiError(HttpStatus.FORBIDDEN, ex.getMessage(), "Your account has not been activated");
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<ApiError> authenticationException(final Exception ex) {
+        logger.error(ex.getClass().getName());
+        logger.error(ex.getMessage());
+        final ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, ex.getMessage(), "error during authenticating");
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 

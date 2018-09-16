@@ -19,7 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 @Service
 public class EmailService implements IEmailService {
     private Logger logger = LoggerFactory.getLogger(EmailService.class);
-    public static int noOfQuickServiceThreads = 20;
+    private static int noOfQuickServiceThreads = 20;
 
     /**
      * this statement create a thread pool of twenty threads

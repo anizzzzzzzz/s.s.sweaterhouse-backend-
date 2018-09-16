@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableSpringDataWebSupport
-public class Webconfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {

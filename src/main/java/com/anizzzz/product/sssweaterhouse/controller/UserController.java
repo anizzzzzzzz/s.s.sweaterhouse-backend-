@@ -42,11 +42,6 @@ public class UserController {
         return new ResponseEntity<>(message, message.getHttpStatus());
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<?> findAll(Pageable pageable){
-        return ResponseEntity.ok(iUserService.findAll(pageable));
-    }
-
     @GetMapping("/user")
     @JsonView({View.ShowUser.class})
     public ResponseEntity<?> findOne(@RequestParam String username){
