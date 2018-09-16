@@ -5,7 +5,7 @@ import com.anizzzz.product.sssweaterhouse.model.ProductSize;
 import java.util.List;
 
 public interface IProductSizeService {
-    ProductSize findOne(int id);
+    ProductSize findOne(Long id);
 
     void saveAll(List<ProductSize> productSizes);
 

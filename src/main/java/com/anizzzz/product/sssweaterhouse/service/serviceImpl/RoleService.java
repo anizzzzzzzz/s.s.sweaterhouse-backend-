@@ -19,7 +19,7 @@ public class RoleService implements IRoleService{
     }
 
     @Override
-    public Role findOne(int id) {
+    public Role findOne(Long id) {
         Optional<Role> role=roleRepository.findById(id);
 
         return role.orElse(null);
@@ -33,5 +33,10 @@ public class RoleService implements IRoleService{
     @Override
     public List<Role> findAll() {
         return roleRepository.findAll();
+    }
+
+    @Override
+    public Role findByName(String name) {
+        return roleRepository.findByName(name);
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.social.security.SpringSocialConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +27,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurity extends WebSecurityConfigurerAdapter{
     @Value("${jwt.header}")
     private String tokenHeader;
+    @Value("${route.social.login.google}")
+    private String googleRoute;
+    @Value("${route.social.login.facebook}")
+    private String facebookRoute;
+    @Value("${route.social.login.error}")
+    private String errorRoute;
+    @Value("${jwt.route.authentication.social.login}")
+    private String socialRedirectUrl;
 
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
@@ -56,10 +65,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
                 .antMatchers(HttpMethod.GET, "/find-all").permitAll()
                 .antMatchers(HttpMethod.POST, "/find-one").permitAll()
                 .antMatchers(HttpMethod.GET, "/find-all-sales").permitAll()
+                .antMatchers(HttpMethod.GET,socialRedirectUrl).permitAll()
+                .antMatchers(errorRoute).permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .apply(getSpringSocialConfigurer())
+                .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .addFilterAfter(new JwtAuthenticationFilter(userDetailsService, jwtTokenUtil, tokenHeader),
                         UsernamePasswordAuthenticationFilter.class)
@@ -82,5 +95,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
     @Override
     public UserDetailsService userDetailsService() {
         return userDetailsService;
+    }
+
+    private SpringSocialConfigurer getSpringSocialConfigurer() {
+        SpringSocialConfigurer config = new SpringSocialConfigurer();
+        config.signupUrl(errorRoute);
+        config.alwaysUsePostLoginUrl(true);
+        config.postLoginUrl(socialRedirectUrl);
+
+        return config;
     }
 }

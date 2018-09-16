@@ -15,15 +15,19 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class AuthController {
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
-    @PostMapping("/auth")
+    @Autowired
+    public AuthController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
+
+    @PostMapping("${jwt.route.authentication.path}")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthRequest jwtAuthRequest){
         return ResponseEntity.ok(authenticationService.createAuthentication(jwtAuthRequest));
     }
 
-    @PostMapping("/refresh-token")
+    @PostMapping("${jwt.route.authentication.refresh}")
     public ResponseEntity<?> refreshToken(HttpServletRequest request){
         JwtAuthResponse response = authenticationService.refreshAndSendAuthenticationToken(request);
         if(response!=null)

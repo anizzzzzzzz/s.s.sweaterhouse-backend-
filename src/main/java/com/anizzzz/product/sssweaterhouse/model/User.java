@@ -4,10 +4,6 @@ import com.anizzzz.product.sssweaterhouse.annotation.ValidEmail;
 import com.anizzzz.product.sssweaterhouse.view.View;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -15,9 +11,6 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "user")
 public class User {
@@ -44,14 +37,15 @@ public class User {
     @NotEmpty
     private String password;
 
+    private String userId;
+    private String accountId;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
     private Date createdDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
-    @Column(nullable = true)
     private Date activatedDate;
     private boolean active;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
-    @Column(nullable = true)
     private Date passwordStamp;
 
     @ManyToMany(targetEntity = PasswordResetToken.class, fetch = FetchType.EAGER)
@@ -65,7 +59,171 @@ public class User {
     private VerificationToken verificationToken;
 
     @OneToOne(targetEntity = PasswordResetToken.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "password_reset_id")
+    @JoinColumn(name = "reset_password_token_id")
     private PasswordResetToken passwordResetToken;
 
+    public User(){}
+
+    public User(@NotNull @NotEmpty String firstname,
+                @NotNull @NotEmpty String lastname,
+                @NotNull @NotEmpty String username,
+                @NotNull @NotEmpty String password,
+                String userId, String accountId,
+                Date createdDate,
+                Date activatedDate,
+                boolean active,
+                Date passwordStamp,
+                List<Role> roles,
+                VerificationToken verificationToken,
+                PasswordResetToken passwordResetToken) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.userId = userId;
+        this.accountId = accountId;
+        this.createdDate = createdDate;
+        this.activatedDate = activatedDate;
+        this.active = active;
+        this.passwordStamp = passwordStamp;
+        this.roles = roles;
+        this.verificationToken = verificationToken;
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public User(String firstname,
+                String lastname,
+                String username,
+                String password,
+                String userId,
+                String accountId,
+                Date createdDate,
+                Date activatedDate,
+                boolean active,
+                Date passwordStamp,
+                List<Role> roles){
+        this.firstname=firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.userId = userId;
+        this.accountId = accountId;
+        this.createdDate = createdDate;
+        this.activatedDate = activatedDate;
+        this.active = active;
+        this.passwordStamp = passwordStamp;
+        this.roles = roles;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getActivatedDate() {
+        return activatedDate;
+    }
+
+    public void setActivatedDate(Date activatedDate) {
+        this.activatedDate = activatedDate;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public Date getPasswordStamp() {
+        return passwordStamp;
+    }
+
+    public void setPasswordStamp(Date passwordStamp) {
+        this.passwordStamp = passwordStamp;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public VerificationToken getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(VerificationToken verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public PasswordResetToken getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(PasswordResetToken passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
 }

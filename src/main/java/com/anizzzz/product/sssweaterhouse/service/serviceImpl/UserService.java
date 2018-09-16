@@ -1,6 +1,8 @@
 package com.anizzzz.product.sssweaterhouse.service.serviceImpl;
 
+import com.anizzzz.product.sssweaterhouse.constant.UserRole;
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
+import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.DuplicateUserNameException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.EmailException;
 import com.anizzzz.product.sssweaterhouse.model.PasswordResetToken;
 import com.anizzzz.product.sssweaterhouse.model.User;
@@ -18,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.ConnectionKey;
+import org.springframework.social.connect.UserProfile;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -74,9 +79,10 @@ public class UserService implements IUserService {
         else{
             user.setUsername(user.getUsername().toLowerCase());
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            user.setRoles(Arrays.asList(iRoleService.findOne(3)));
+            user.setRoles(Collections.singletonList(iRoleService.findOne(3L)));
             user.setCreatedDate(new Date());
             user.setActive(false);
+            user.setPasswordStamp(new Date());
             user.setVerificationToken(new VerificationToken(
                     randUUIDToken(),
                     setTokenExpirationDate(EXPIRATION),
@@ -166,6 +172,7 @@ public class UserService implements IUserService {
                 } else {
                     User user = verificationToken.get().getUser();
                     user.setActive(true);
+                    user.setActivatedDate(new Date());
                     userRepository.save(user);
                     return new ResponseMessage(
                             "Your account has been activated",
@@ -195,13 +202,21 @@ public class UserService implements IUserService {
         if(optional.isPresent()){
             User user=optional.get();
             if(user.isActive()) {
-                user.setPasswordResetToken(
-                        new PasswordResetToken(
-                                randUUIDToken(),
-                                setTokenExpirationDate(EXPIRATION),
-                                user)
-                );
-                userRepository.save(user);
+                PasswordResetToken passwordResetToken = user.getPasswordResetToken();
+                if(passwordResetToken!=null) {
+                    passwordResetToken.setToken(randUUIDToken());
+                    passwordResetToken.setExpiryDate(setTokenExpirationDate(EXPIRATION));
+                    iPasswordResetService.save(passwordResetToken);
+                }
+                else{
+                    user.setPasswordResetToken(
+                            new PasswordResetToken(
+                                    randUUIDToken(),
+                                    setTokenExpirationDate(EXPIRATION),
+                                    user)
+                    );
+                    userRepository.save(user);
+                }
                 //#TODO
                 //send email for password reset too and clicking that link would(not entering token).
                 return new ResponseMessage(
@@ -236,7 +251,8 @@ public class UserService implements IUserService {
                         if (Objects.equals(optional.get().getId(), tokenOptional.get().getUser().getId())) {
                             //resetting password
                             User user = optional.get();
-                            user.setPassword(password);
+                            user.setPassword(bCryptPasswordEncoder.encode(password));
+                            user.setPasswordStamp(new Date());
                             userRepository.save(user);
 
                             return new ResponseMessage(
@@ -276,6 +292,89 @@ public class UserService implements IUserService {
             );
         }
     }
+
+    //----------------------------- Social Login -----------------------------------------
+    @Override
+    public User findByUserId(String userId) {
+        Optional<User> user = userRepository.findByUserId(userId);
+        return user.orElse(null);
+    }
+
+    @Override
+    public User findByUserIdAndAccountId(String userId, String accountId) {
+        Optional<User> user = userRepository.findByUserIdAndAccountId(userId, accountId);
+        return user.orElse(null);
+    }
+
+    @Override
+    public String findAvailableUserName(String userName_prefix, String accountProviderId) {
+        String username=userName_prefix+"@"+accountProviderId+".com";
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if(!user.isPresent()){
+            return username;
+        }
+
+        int i=0;
+        while(true){
+            username=userName_prefix+"_"+(i++)+"@"+accountProviderId+".com";
+            user=findByUsername(username);
+            if(!user.isPresent()){
+                return username;
+            }
+        }
+    }
+
+    @Override
+    public User createAppUser(Connection<?> connection) throws DuplicateUserNameException {
+        try{
+            ConnectionKey key = connection.getKey();
+            logger.info("Key = ( "+key.getProviderId()+" , "+key.getProviderUserId()+" )");
+
+            UserProfile userProfile=connection.fetchUserProfile();
+
+            User appUser=findByUserIdAndAccountId(key.getProviderUserId(),key.getProviderId());
+
+            if(appUser!=null){
+                return appUser;
+            }
+
+            String username=userProfile.getEmail();
+
+            if(username==null || username.length() == 0){
+                String userName_prefix = userProfile.getFirstName().trim().toLowerCase()
+                        +"_"+userProfile.getLastName().trim().toLowerCase();
+                username=findAvailableUserName(userName_prefix, connection.getKey().getProviderId());
+            }
+            else{
+                if (findByUsername(username).isPresent()){
+                    throw new DuplicateUserNameException();
+                }
+            }
+
+            appUser = new User(
+                    userProfile.getFirstName(),
+                    userProfile.getLastName(),
+                    username,
+                    bCryptPasswordEncoder.encode(UUID.randomUUID().toString().substring(0,10)),
+                    connection.getKey().getProviderUserId(),
+                    connection.getKey().getProviderId(),
+                    new Date(),
+                    new Date(),
+                    true,
+                    new Date(),
+                    Collections.singletonList(iRoleService.findByName(UserRole.USER.toString()))
+            );
+            userRepository.save(appUser);
+            return appUser;
+        }
+        catch (DuplicateUserNameException ex){
+            logger.error(ex.getMessage());
+        }
+        return null;
+    }
+
+    //----------------------------- Social Login -----------------------------------------
 
     private String randUUIDToken(){
         String randUid= UUID.randomUUID().toString();

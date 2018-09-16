@@ -221,6 +221,14 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    @ExceptionHandler({DuplicateUserNameException.class})
+    public ResponseEntity<ApiError> handleDuplicateUsernameException(final Exception ex) {
+        logger.error(ex.getClass().getName());
+        logger.error(ex.getMessage());
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "Username already exits. Please login with another account.");
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ApiError> handleAll(final Exception ex) {
         logger.error(ex.getClass().getName());

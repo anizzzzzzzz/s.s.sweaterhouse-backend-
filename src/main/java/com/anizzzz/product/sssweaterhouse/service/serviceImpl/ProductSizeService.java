@@ -19,7 +19,7 @@ public class ProductSizeService implements IProductSizeService {
     }
 
     @Override
-    public ProductSize findOne(int id) {
+    public ProductSize findOne(Long id) {
         Optional<ProductSize> size= productSizeRepository.findById(id);
 
         return size.orElse(null);
