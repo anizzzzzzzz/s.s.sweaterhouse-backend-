@@ -33,7 +33,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
     private String facebookRoute;
     @Value("${route.social.login.error}")
     private String errorRoute;
-    @Value("${jwt.route.authentication.social.login}")
+    @Value("${route.social.login.success}")
     private String socialRedirectUrl;
 
     private final UserDetailsServiceImpl userDetailsService;

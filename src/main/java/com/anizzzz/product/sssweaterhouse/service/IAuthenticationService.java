@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface IAuthenticationService {
     JwtAuthResponse createAuthentication(JwtAuthRequest jwtAuthRequest);
 
-    JwtAuthResponse createAuthenticationForSocialLogin();
+    JwtAuthResponse createAuthenticationForSocialLogin(String username);
 
     JwtAuthResponse refreshAndSendAuthenticationToken(HttpServletRequest request);
 }

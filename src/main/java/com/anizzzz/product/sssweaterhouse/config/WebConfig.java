@@ -1,5 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.config;
 
+import com.anizzzz.product.sssweaterhouse.interceptor.LoginInterceptor;
 import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtTokenUtil;
 import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtUserFactory;
 import com.anizzzz.product.sssweaterhouse.utils.ICompresserUtils;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -46,4 +48,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public UserValidator beforeCreateUserValidator(){return new UserValidator();}
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor());
+    }
 }

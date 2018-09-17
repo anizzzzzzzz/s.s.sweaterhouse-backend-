@@ -19,13 +19,6 @@ public class RoleService implements IRoleService{
     }
 
     @Override
-    public Role findOne(Long id) {
-        Optional<Role> role=roleRepository.findById(id);
-
-        return role.orElse(null);
-    }
-
-    @Override
     public void saveAll(List<Role> roles) {
         roleRepository.saveAll(roles);
     }

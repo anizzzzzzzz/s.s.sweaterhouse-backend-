@@ -5,6 +5,7 @@ import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.DuplicateUserNameException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.EmailException;
 import com.anizzzz.product.sssweaterhouse.model.PasswordResetToken;
+import com.anizzzz.product.sssweaterhouse.model.Role;
 import com.anizzzz.product.sssweaterhouse.model.User;
 import com.anizzzz.product.sssweaterhouse.model.VerificationToken;
 import com.anizzzz.product.sssweaterhouse.repository.UserRepository;
@@ -79,7 +80,7 @@ public class UserService implements IUserService {
         else{
             user.setUsername(user.getUsername().toLowerCase());
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            user.setRoles(Collections.singletonList(iRoleService.findOne(3L)));
+            user.setRoles(Collections.singletonList(iRoleService.findByName(UserRole.USER.toString())));
             user.setCreatedDate(new Date());
             user.setActive(false);
             user.setPasswordStamp(new Date());

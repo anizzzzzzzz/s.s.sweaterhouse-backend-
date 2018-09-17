@@ -8,12 +8,15 @@ import com.fasterxml.jackson.annotation.JsonView;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 87937612836871263L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,7 +51,7 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
     private Date passwordStamp;
 
-    @ManyToMany(targetEntity = PasswordResetToken.class, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
     @JoinTable(name="user_role",
             joinColumns = @JoinColumn(name="user_id"),
             inverseJoinColumns = @JoinColumn(name="role_id"))
@@ -64,19 +67,17 @@ public class User {
 
     public User(){}
 
-    public User(@NotNull @NotEmpty String firstname,
-                @NotNull @NotEmpty String lastname,
-                @NotNull @NotEmpty String username,
-                @NotNull @NotEmpty String password,
-                String userId, String accountId,
+    public User(String firstname,
+                String lastname,
+                String username,
+                String password,
+                String userId,
+                String accountId,
                 Date createdDate,
                 Date activatedDate,
                 boolean active,
-                Date passwordStamp,
-                List<Role> roles,
-                VerificationToken verificationToken,
-                PasswordResetToken passwordResetToken) {
-        this.firstname = firstname;
+                Date passwordStamp){
+        this.firstname=firstname;
         this.lastname = lastname;
         this.username = username;
         this.password = password;
@@ -86,9 +87,6 @@ public class User {
         this.activatedDate = activatedDate;
         this.active = active;
         this.passwordStamp = passwordStamp;
-        this.roles = roles;
-        this.verificationToken = verificationToken;
-        this.passwordResetToken = passwordResetToken;
     }
 
     public User(String firstname,
@@ -101,7 +99,7 @@ public class User {
                 Date activatedDate,
                 boolean active,
                 Date passwordStamp,
-                List<Role> roles){
+                List<Role> roleList){
         this.firstname=firstname;
         this.lastname = lastname;
         this.username = username;
@@ -112,7 +110,7 @@ public class User {
         this.activatedDate = activatedDate;
         this.active = active;
         this.passwordStamp = passwordStamp;
-        this.roles = roles;
+        this.roles = roleList;
     }
 
     public Long getId() {

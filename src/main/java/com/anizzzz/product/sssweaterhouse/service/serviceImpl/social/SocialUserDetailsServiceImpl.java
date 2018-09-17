@@ -25,7 +25,6 @@ public class SocialUserDetailsServiceImpl implements SocialUserDetailsService {
 
     @Override
     public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
-        System.out.println(userId);
         User user = iUserService.findByUserId(userId);
         if(user == null){
             throw new UsernameNotFoundException("Cannot find user by id " + userId);

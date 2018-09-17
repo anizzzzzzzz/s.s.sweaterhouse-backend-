@@ -43,8 +43,9 @@ public class AuthenticationService implements IAuthenticationService {
     }
 
     @Override
-    public JwtAuthResponse createAuthenticationForSocialLogin() {
-        return null;
+    public JwtAuthResponse createAuthenticationForSocialLogin(String username) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username.toLowerCase());
+        return new JwtAuthResponse(jwtTokenUtil.generateToken(userDetails), username);
     }
 
     @Override
