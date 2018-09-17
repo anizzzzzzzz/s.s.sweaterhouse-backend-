@@ -2,7 +2,6 @@ package com.anizzzz.product.sssweaterhouse.config;
 
 import com.anizzzz.product.sssweaterhouse.interceptor.LoginInterceptor;
 import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtTokenUtil;
-import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtUserFactory;
 import com.anizzzz.product.sssweaterhouse.utils.ICompresserUtils;
 import com.anizzzz.product.sssweaterhouse.utils.impl.JpgCompresserUtil;
 import com.anizzzz.product.sssweaterhouse.utils.impl.PngCompresserUtil;
