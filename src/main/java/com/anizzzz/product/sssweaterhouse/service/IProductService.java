@@ -27,7 +27,7 @@ public interface IProductService {
 
     Page<ProductResponse> findAllByType(Pageable pageable, String type) throws IOException;
 
-    Page<ProductResponse> findAllBySaleAndType(Pageable pageable, boolean sale, String type) throws IOException;
+    Page<ProductResponse> findAllBySaleAndType(Pageable pageable, String type) throws IOException;
 
     Page<ProductResponse> findAllByTypeAndPriceBetween(Pageable pageable, String type, double priceBegin, double priceEnd) throws IOException;
 

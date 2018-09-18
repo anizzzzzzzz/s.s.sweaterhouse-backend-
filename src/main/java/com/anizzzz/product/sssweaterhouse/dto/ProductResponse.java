@@ -20,6 +20,7 @@ public class ProductResponse {
     private byte[] image;
     private String imageType;
     private List<HashMap<String,Object>> images;
+    private boolean sale;
 
     public ProductResponse(String name,
                            String productCode,
@@ -27,7 +28,8 @@ public class ProductResponse {
                            double price,
                            List<ProductSize> size,
                            byte[] image,
-                           String imageType){
+                           String imageType,
+                           boolean sale){
         this.name=name;
         this.productCode=productCode;
         this.type=type;
@@ -35,6 +37,7 @@ public class ProductResponse {
         this.size=size;
         this.image=image;
         this.imageType=imageType;
+        this.sale=sale;
     }
 
     public ProductResponse(String name,

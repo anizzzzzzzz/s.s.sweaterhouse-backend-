@@ -148,7 +148,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> findAllBySaleAndType(Pageable pageable, boolean sale, String type) throws IOException {
+    public Page<ProductResponse> findAllBySaleAndType(Pageable pageable, String type) throws IOException {
         Page<Product> products=productRepository.findAllBySaleAndTypeOrderByCreatedDateDesc(pageable,true,type);
         return getProductResponse(products);
     }
@@ -245,7 +245,8 @@ public class ProductService implements IProductService {
                             product.getPrice(),
                             product.getSize(),
                             IOUtils.toByteArray(FileUtils.openInputStream(new File(proInfo.getLocation()))),
-                            proInfo.getType()
+                            proInfo.getType(),
+                            product.isSale()
                     )
             );
         }

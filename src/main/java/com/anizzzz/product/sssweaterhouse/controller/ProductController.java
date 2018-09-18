@@ -54,4 +54,9 @@ public class ProductController {
     public ResponseEntity<?> findAllSales(Pageable pageable) throws IOException{
         return ResponseEntity.ok(iProductService.findAllBySale(pageable));
     }
+
+    @GetMapping("/find-all-sales-and-type")
+    public ResponseEntity<?> findAllBySalesAndType(Pageable pageable, @RequestParam String type) throws IOException{
+        return ResponseEntity.ok(iProductService.findAllBySaleAndType(pageable,type));
+    }
 }

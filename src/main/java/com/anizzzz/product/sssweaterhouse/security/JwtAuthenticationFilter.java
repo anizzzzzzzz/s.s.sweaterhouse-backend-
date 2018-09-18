@@ -52,10 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }
-        else{
-            logger.warn("couldn't find bearer string, will ignore the header");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
 
         logger.debug("checking authentication for user '{}'", username);
         if(username != null && username.length()>0 && SecurityContextHolder.getContext().getAuthentication() == null){

@@ -65,6 +65,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
                 .antMatchers(HttpMethod.GET, "/find-all").permitAll()
                 .antMatchers(HttpMethod.POST, "/find-one").permitAll()
                 .antMatchers(HttpMethod.GET, "/find-all-sales").permitAll()
+                .antMatchers(HttpMethod.GET, "/find-all-sales-and-type").permitAll()
                 .antMatchers(HttpMethod.GET,socialRedirectUrl).permitAll()
                 .antMatchers(errorRoute).permitAll()
                 .anyRequest().authenticated()
