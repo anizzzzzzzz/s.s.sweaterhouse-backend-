@@ -185,7 +185,7 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
     public ResponseEntity<ApiError> handleExtensionMismatchException(final Exception ex) {
         logger.error(ex.getClass().getName());
         logger.error(ex.getMessage());
-        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "Can only save image with jpeg/png extension.");
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "Can only saveUser image with jpeg/png extension.");
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
@@ -193,7 +193,7 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
     public ResponseEntity<ApiError> handleProductexception(final Exception ex) {
         logger.error(ex.getClass().getName());
         logger.error(ex.getMessage());
-        final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), "Can only save image with jpeg/png extension.");
+        final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), "Can only saveUser image with jpeg/png extension.");
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 

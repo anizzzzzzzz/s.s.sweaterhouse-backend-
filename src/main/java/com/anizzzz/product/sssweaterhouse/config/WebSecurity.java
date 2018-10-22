@@ -55,7 +55,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()
-                .antMatchers(HttpMethod.POST, "/user").permitAll()
+                .antMatchers(HttpMethod.POST, "/register/user").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/resend-token").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/activate-user").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/send-reset-password-token").permitAll()
@@ -96,6 +96,11 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
     @Override
     public UserDetailsService userDetailsService() {
         return userDetailsService;
+    }
+
+    @Override
+    public void configure(org.springframework.security.config.annotation.web.builders.WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
     }
 
     private SpringSocialConfigurer getSpringSocialConfigurer() {

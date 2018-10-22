@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class JwtTokenUtil implements Serializable {
@@ -28,6 +26,9 @@ public class JwtTokenUtil implements Serializable {
 
     public String generateToken(UserDetails userDetails){
         Map<String, Object> claims = new HashMap<>();
+        List<String> roles = new ArrayList<>();
+        userDetails.getAuthorities().forEach(auth->roles.add(auth.getAuthority()));
+        claims.put("roles",roles);
         return doGenerateToken(claims, userDetails.getUsername());
     }
 

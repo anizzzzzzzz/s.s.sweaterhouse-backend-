@@ -25,6 +25,8 @@ public class User implements Serializable {
     @NotEmpty
     @JsonView({View.ShowUser.class})
     private String firstname;
+    @JsonView({View.ShowUser.class})
+    private String middlename;
     @NotNull
     @NotEmpty
     @JsonView({View.ShowUser.class})
@@ -71,6 +73,38 @@ public class User implements Serializable {
                 String lastname,
                 String username,
                 String password,
+                List<Role> roles){
+        this.firstname=firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public User(String firstname,
+                String lastname,
+                String username,
+                String password,
+                List<Role> roles,
+                Date createdDate,
+                Date activatedDate,
+                boolean active,
+                Date passwordStamp){
+        this.firstname=firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.createdDate = createdDate;
+        this.activatedDate = activatedDate;
+        this.active = active;
+        this.passwordStamp = passwordStamp;
+    }
+
+    public User(String firstname,
+                String lastname,
+                String username,
+                String password,
                 String userId,
                 String accountId,
                 Date createdDate,
@@ -99,8 +133,34 @@ public class User implements Serializable {
                 Date activatedDate,
                 boolean active,
                 Date passwordStamp,
+                List<Role> roles){
+        this.firstname=firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.userId = userId;
+        this.accountId = accountId;
+        this.createdDate = createdDate;
+        this.activatedDate = activatedDate;
+        this.active = active;
+        this.passwordStamp = passwordStamp;
+        this.roles=roles;
+    }
+
+    public User(String firstname,
+                String middlename,
+                String lastname,
+                String username,
+                String password,
+                String userId,
+                String accountId,
+                Date createdDate,
+                Date activatedDate,
+                boolean active,
+                Date passwordStamp,
                 List<Role> roleList){
         this.firstname=firstname;
+        this.middlename=middlename;
         this.lastname = lastname;
         this.username = username;
         this.password = password;
@@ -128,6 +188,10 @@ public class User implements Serializable {
     public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
+
+    public String getMiddlename(){return middlename;}
+
+    public void setMiddlename(String middlename){ this.middlename = middlename;}
 
     public String getLastname() {
         return lastname;

@@ -32,9 +32,9 @@ public class UserController {
         binder.addValidators(userValidator);
     }
 
-    @PostMapping("/user")
+    @PostMapping("/register/user")
     public ResponseEntity<?> save(@Valid @RequestBody User user, HttpServletRequest request){
-        ResponseMessage message=iUserService.save(user, request);
+        ResponseMessage message=iUserService.saveUser(user, request);
         return new ResponseEntity<>(message, message.getHttpStatus());
     }
 

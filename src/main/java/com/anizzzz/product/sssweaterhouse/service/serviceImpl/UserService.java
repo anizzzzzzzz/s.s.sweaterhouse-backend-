@@ -5,6 +5,7 @@ import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.DuplicateUserNameException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.EmailException;
 import com.anizzzz.product.sssweaterhouse.model.PasswordResetToken;
+import com.anizzzz.product.sssweaterhouse.model.Role;
 import com.anizzzz.product.sssweaterhouse.model.User;
 import com.anizzzz.product.sssweaterhouse.model.VerificationToken;
 import com.anizzzz.product.sssweaterhouse.repository.UserRepository;
@@ -22,6 +23,7 @@ import org.springframework.social.connect.UserProfile;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import java.util.*;
 
 import static com.anizzzz.product.sssweaterhouse.utils.TokenExpirationUtils.setTokenExpirationDate;
@@ -62,7 +64,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseMessage save(User user, HttpServletRequest request) {
+    public ResponseMessage saveUser(User user, HttpServletRequest request) {
         Optional<User> user1=userRepository.findByUsername(user.getUsername().toLowerCase());
         if(user1.isPresent()){
             return new ResponseMessage(
@@ -102,6 +104,36 @@ public class UserService implements IUserService {
             }
             return new ResponseMessage(
                     user.getUsername()+" has been successfully registered.",
+                    HttpStatus.OK
+            );
+        }
+    }
+
+    @Override
+    public ResponseMessage saveAdmin(User user) {
+        Optional<User> optional = userRepository.findByUsername(user.getUsername());
+        if(optional.isPresent()){
+            return new ResponseMessage(
+                    user.getUsername().toLowerCase()+" already exists. Try with another email id.",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+        else{
+            user.setUsername(user.getUsername().toLowerCase());
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            if(user.getRoles().size()==0){
+                List<Role> roles = new ArrayList<>();
+                roles.add(iRoleService.findByName(UserRole.ADMIN.toString()));
+                roles.add(iRoleService.findByName(UserRole.USER.toString()));
+                user.setRoles(roles);
+            }
+            user.setCreatedDate(new Date());
+            user.setActive(true);
+            user.setActivatedDate(new Date());
+            user.setPasswordStamp(new Date());
+            userRepository.save(user);
+            return new ResponseMessage(
+                    user.getUsername()+" has been successfully registered as admin.",
                     HttpStatus.OK
             );
         }

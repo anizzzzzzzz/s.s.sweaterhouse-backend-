@@ -4,24 +4,29 @@ import com.anizzzz.product.sssweaterhouse.constant.Size;
 import com.anizzzz.product.sssweaterhouse.constant.UserRole;
 import com.anizzzz.product.sssweaterhouse.model.ProductSize;
 import com.anizzzz.product.sssweaterhouse.model.Role;
+import com.anizzzz.product.sssweaterhouse.model.User;
 import com.anizzzz.product.sssweaterhouse.service.IProductSizeService;
 import com.anizzzz.product.sssweaterhouse.service.IRoleService;
+import com.anizzzz.product.sssweaterhouse.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Date;
 
 @Component
 public class DatabaseDataLoader implements ApplicationRunner {
     private final IRoleService iRoleService;
     private final IProductSizeService iProductSizeService;
+    private final IUserService iUserService;
 
     @Autowired
-    public DatabaseDataLoader(IRoleService iRoleService, IProductSizeService iProductSizeService) {
+    public DatabaseDataLoader(IRoleService iRoleService, IProductSizeService iProductSizeService, IUserService iUserService) {
         this.iRoleService = iRoleService;
         this.iProductSizeService = iProductSizeService;
+        this.iUserService = iUserService;
     }
 
     @Override
@@ -44,6 +49,19 @@ public class DatabaseDataLoader implements ApplicationRunner {
                             new ProductSize(Size.XL.toString()),
                             new ProductSize(Size.XXL.toString()),
                             new ProductSize(Size.XXXL.toString())
+                    )
+            );
+        }
+
+        String adminUsername = "admin@sweaterhouse.com";
+        if(!iUserService.findByUsername(adminUsername).isPresent()){
+            iUserService.saveAdmin(
+                    new User(
+                            "Admin",
+                            "Sweaterhouse",
+                            adminUsername,
+                            "Sweaterhouse101",
+                            iRoleService.findAll()
                     )
             );
         }
