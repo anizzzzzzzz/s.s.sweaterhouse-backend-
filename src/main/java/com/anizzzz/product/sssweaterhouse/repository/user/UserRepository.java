@@ -1,16 +1,16 @@
 package com.anizzzz.product.sssweaterhouse.repository.user;
 
-import com.anizzzz.product.sssweaterhouse.model.Users;
+import com.anizzzz.product.sssweaterhouse.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<Users,String> {
-    Optional<Users> findByUsername(String username);
+public interface UserRepository extends JpaRepository<User,String> {
+    Optional<User> findByUsername(String username);
 
-    Optional<Users> findByUserIdAndAccountId(String userId, String accountId);
+    Optional<User> findByUserIdAndAccountId(String userId, String accountId);
 
-    Optional<Users> findByUserId(String userId);
+    Optional<User> findByUserId(String userId);
 
-    Optional<Users> findByVerificationToken_Token(String token);
+    Optional<User> findByVerificationToken_Token(String token);
 }

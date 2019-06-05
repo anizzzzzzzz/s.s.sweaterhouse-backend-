@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.user;
 
-import com.anizzzz.product.sssweaterhouse.model.PasswordResetToken;
+import com.anizzzz.product.sssweaterhouse.model.user.PasswordResetToken;
 
 import java.util.Optional;
 

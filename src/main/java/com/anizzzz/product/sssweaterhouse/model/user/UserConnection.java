@@ -1,8 +1,7 @@
-package com.anizzzz.product.sssweaterhouse.model;
+package com.anizzzz.product.sssweaterhouse.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +13,6 @@ import java.io.Serializable;
 @Table(name = "userconnection")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class UserConnection implements Serializable {
     private static final long serialVersionUID = -6991752510891411572L;
 
@@ -53,4 +51,6 @@ public class UserConnection implements Serializable {
 
     @Column(name = "Expiretime", nullable = true)
     private Long expireTime;
+
+    public UserConnection(){}
 }

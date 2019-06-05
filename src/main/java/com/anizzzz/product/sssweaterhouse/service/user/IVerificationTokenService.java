@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.user;
 
-import com.anizzzz.product.sssweaterhouse.model.VerificationToken;
+import com.anizzzz.product.sssweaterhouse.model.user.VerificationToken;
 
 import java.util.Optional;
 

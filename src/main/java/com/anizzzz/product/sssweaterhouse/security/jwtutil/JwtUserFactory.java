@@ -1,7 +1,7 @@
 package com.anizzzz.product.sssweaterhouse.security.jwtutil;
 
-import com.anizzzz.product.sssweaterhouse.model.Role;
-import com.anizzzz.product.sssweaterhouse.model.Users;
+import com.anizzzz.product.sssweaterhouse.model.user.Role;
+import com.anizzzz.product.sssweaterhouse.model.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -11,18 +11,18 @@ import java.util.stream.Collectors;
 public class JwtUserFactory {
     private JwtUserFactory(){}
 
-    public static JwtUser create(Users users){
+    public static JwtUser create(User user){
         return new JwtUser(
-                users.getId(),
-                users.getUsername(),
-                users.getPassword(),
-                mapToGrantedAuthorities(users.getRoles()),
-                users.isActive(),
-                users.getCreatedDate(),
-                users.getFirstname(),
-                users.getLastname(),
-                users.getActivatedDate(),
-                users.getPasswordStamp()
+                user.getId(),
+                user.getUsername(),
+                user.getPassword(),
+                mapToGrantedAuthorities(user.getRoles()),
+                user.isActive(),
+                user.getCreatedDate(),
+                user.getFirstname(),
+                user.getLastname(),
+                user.getActivatedDate(),
+                user.getPasswordStamp()
         );
     }
 

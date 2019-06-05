@@ -1,9 +1,8 @@
-package com.anizzzz.product.sssweaterhouse.model;
+package com.anizzzz.product.sssweaterhouse.model.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -13,7 +12,6 @@ import java.util.Date;
 @Table(name = "verification_token")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class VerificationToken {
     @Id
     @GeneratedValue(generator="system-uuid")
@@ -23,17 +21,19 @@ public class VerificationToken {
 
     private String token;
 
-    @OneToOne(targetEntity = Users.class, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
-    private Users users;
+    private User user;
 
     @Column(name = "expiry_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy hh:mm:ss")
     private Date expiryDate;
 
-    public VerificationToken(String token, Date expiryDate, Users users){
+    public VerificationToken(){}
+
+    public VerificationToken(String token, Date expiryDate, User user){
         this.token=token;
         this.expiryDate=expiryDate;
-        this.users = users;
+        this.user = user;
     }
 }

@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.user.impl;
 
-import com.anizzzz.product.sssweaterhouse.model.Users;
+import com.anizzzz.product.sssweaterhouse.model.user.User;
 import com.anizzzz.product.sssweaterhouse.repository.user.UserRepository;
 import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtUserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username){
-        Optional<Users> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
 
         if(user.isPresent()){
             return JwtUserFactory.create(user.get());
         }
         else{
-            throw new UsernameNotFoundException(String.format("No users found with username '%s'.", username));
+            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         }
     }
 }

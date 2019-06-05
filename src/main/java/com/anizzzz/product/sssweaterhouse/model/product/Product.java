@@ -1,10 +1,9 @@
-package com.anizzzz.product.sssweaterhouse.model;
+package com.anizzzz.product.sssweaterhouse.model.product;
 
+import com.anizzzz.product.sssweaterhouse.model.comment.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -16,7 +15,6 @@ import java.util.List;
 @Table(name="product")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class Product {
     @Id
     @GenericGenerator(name = "system_uuid", strategy = "uuid")
@@ -34,17 +32,27 @@ public class Product {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
     private Date createdDate;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @Column(name = "updated_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
+    private Date updatedDate;
+
+
     @ManyToMany(targetEntity = ProductSize.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name="product_productsize",
             joinColumns = @JoinColumn(name="product_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name="size_id", referencedColumnName = "id"))
-    private List<ProductSize> size;
+    private List<ProductSize> size = new ArrayList<>();
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToMany(targetEntity = ProductInfo.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     private List<ProductInfo> productInfos = new ArrayList<>();
+
+    @OneToMany(targetEntity = Comment.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    @OrderBy("createdDate DESC")
+    private List<Comment> comments = new ArrayList<>();
+
+    public Product(){}
 
     public Product(String name,
                    String productCode,
@@ -60,21 +68,8 @@ public class Product {
         this.price=price;
         this.sale=sale;
         this.createdDate=createdDate;
+        this.updatedDate = createdDate;
         this.size=size;
-        this.productInfos=productInfos;
-    }
-
-    public Product(String productCode,
-                   String type,
-                   double price,
-                   boolean sale,
-                   Date createdDate,
-                   List<ProductInfo> productInfos){
-        this.productCode=productCode;
-        this.type=type;
-        this.price=price;
-        this.sale=sale;
-        this.createdDate=createdDate;
         this.productInfos=productInfos;
     }
 }

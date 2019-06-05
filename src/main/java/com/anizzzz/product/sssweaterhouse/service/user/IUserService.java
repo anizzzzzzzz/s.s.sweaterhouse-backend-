@@ -2,18 +2,18 @@ package com.anizzzz.product.sssweaterhouse.service.user;
 
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.DuplicateUserNameException;
-import com.anizzzz.product.sssweaterhouse.model.Users;
+import com.anizzzz.product.sssweaterhouse.model.user.User;
 import org.springframework.social.connect.Connection;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public interface IUserService {
-    Optional<Users> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
-    ResponseMessage saveUser(Users users, HttpServletRequest request);
+    ResponseMessage saveUser(User user, HttpServletRequest request);
 
-    ResponseMessage saveAdmin(Users users);
+    ResponseMessage saveAdmin(User user);
 
     ResponseMessage resendVerificationToken(String username, HttpServletRequest request);
 
@@ -25,11 +25,11 @@ public interface IUserService {
 
     //--------------Social login--------------------------
 
-    Users findByUserId(String userId);
+    User findByUserId(String userId);
 
-    Users findByUserIdAndAccountId(String userId, String accountId);
+    User findByUserIdAndAccountId(String userId, String accountId);
 
     String findAvailableUserName(String userName_prefix, String accountProviderId);
 
-    Users createAppUser(Connection<?> connection) throws DuplicateUserNameException;
+    User createAppUser(Connection<?> connection) throws DuplicateUserNameException;
 }

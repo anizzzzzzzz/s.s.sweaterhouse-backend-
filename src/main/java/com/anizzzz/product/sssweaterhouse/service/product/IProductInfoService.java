@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.product;
 
-import com.anizzzz.product.sssweaterhouse.model.ProductInfo;
+import com.anizzzz.product.sssweaterhouse.model.product.ProductInfo;
 
 import java.util.Optional;
 

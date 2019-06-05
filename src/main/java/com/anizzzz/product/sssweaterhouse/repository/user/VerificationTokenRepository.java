@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.repository.user;
 
-import com.anizzzz.product.sssweaterhouse.model.VerificationToken;
+import com.anizzzz.product.sssweaterhouse.model.user.VerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.user.impl;
 
-import com.anizzzz.product.sssweaterhouse.model.PasswordResetToken;
+import com.anizzzz.product.sssweaterhouse.model.user.PasswordResetToken;
 import com.anizzzz.product.sssweaterhouse.repository.user.PasswordResetRepository;
 import com.anizzzz.product.sssweaterhouse.service.user.IPasswordResetService;
 import org.springframework.beans.factory.annotation.Autowired;

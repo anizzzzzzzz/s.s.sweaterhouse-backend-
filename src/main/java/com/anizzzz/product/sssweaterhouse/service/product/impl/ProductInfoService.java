@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.product.impl;
 
-import com.anizzzz.product.sssweaterhouse.model.ProductInfo;
+import com.anizzzz.product.sssweaterhouse.model.product.ProductInfo;
 import com.anizzzz.product.sssweaterhouse.repository.product.ProductInfoRepository;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductInfoService;
 import org.springframework.beans.factory.annotation.Autowired;

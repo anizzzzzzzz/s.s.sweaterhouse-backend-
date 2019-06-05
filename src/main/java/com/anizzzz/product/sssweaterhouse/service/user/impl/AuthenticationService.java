@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.*;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationService implements IAuthenticationService {
@@ -38,13 +40,21 @@ public class AuthenticationService implements IAuthenticationService {
     public JwtAuthResponse createAuthentication(JwtAuthRequest jwtAuthRequest) {
         authenticate(jwtAuthRequest.getUsername().toLowerCase(), jwtAuthRequest.getPassword());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername().toLowerCase());
-        return new JwtAuthResponse(jwtTokenUtil.generateToken(userDetails), userDetails.getUsername());
+        return new JwtAuthResponse(
+                jwtTokenUtil.generateToken(userDetails),
+                userDetails.getUsername(),
+                userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())
+        );
     }
 
     @Override
     public JwtAuthResponse createAuthenticationForSocialLogin(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username.toLowerCase());
-        return new JwtAuthResponse(jwtTokenUtil.generateToken(userDetails), username);
+        return new JwtAuthResponse(
+                jwtTokenUtil.generateToken(userDetails),
+                username,
+                userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())
+        );
     }
 
     @Override
@@ -54,7 +64,11 @@ public class AuthenticationService implements IAuthenticationService {
         JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
 
         if(jwtTokenUtil.canTokenBeRefreshed(token, user.getPasswordStamp())){
-            return new JwtAuthResponse(jwtTokenUtil.refreshToken(token), username);
+            return new JwtAuthResponse(
+                    jwtTokenUtil.refreshToken(token),
+                    username,
+                    user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())
+            );
         } else{
             return null;
         }
@@ -67,7 +81,7 @@ public class AuthenticationService implements IAuthenticationService {
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException ex){
-            throw new AccountNotActivatedException("Users account not activated",ex);
+            throw new AccountNotActivatedException("User account not activated",ex);
         } catch (InternalAuthenticationServiceException | BadCredentialsException ex){
             throw new AuthenticationException("Either username or password is incorrect", ex);
         }

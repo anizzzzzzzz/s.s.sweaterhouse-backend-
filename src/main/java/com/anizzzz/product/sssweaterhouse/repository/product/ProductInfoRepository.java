@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.repository.product;
 
-import com.anizzzz.product.sssweaterhouse.model.ProductInfo;
+import com.anizzzz.product.sssweaterhouse.model.product.ProductInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

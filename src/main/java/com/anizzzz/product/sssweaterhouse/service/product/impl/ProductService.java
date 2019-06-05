@@ -4,9 +4,9 @@ import com.anizzzz.product.sssweaterhouse.dto.ProductResponse;
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ExtensionMismatchException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ProductException;
-import com.anizzzz.product.sssweaterhouse.model.Product;
-import com.anizzzz.product.sssweaterhouse.model.ProductInfo;
-import com.anizzzz.product.sssweaterhouse.model.ProductSize;
+import com.anizzzz.product.sssweaterhouse.model.product.Product;
+import com.anizzzz.product.sssweaterhouse.model.product.ProductInfo;
+import com.anizzzz.product.sssweaterhouse.model.product.ProductSize;
 import com.anizzzz.product.sssweaterhouse.repository.product.ProductRepository;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductInfoService;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductService;
@@ -56,7 +56,7 @@ public class ProductService implements IProductService {
             sizes.add(iProductSizeService.findBySize(sz));
         });
 
-        String folderLocation=System.getProperty("users.dir") + "\\images\\"+type;
+        String folderLocation=System.getProperty("user.dir") + "/images/"+type;
 
         String productCode=getProductCode(type);
         int i=0;
@@ -82,7 +82,7 @@ public class ProductService implements IProductService {
                     if (!imageFolder.exists())
                         imageFolder.mkdirs();
 
-                    String fileLocation = folderLocation+ "\\" + fileNameWithExt;
+                    String fileLocation = folderLocation+ "/" + fileNameWithExt;
                     /*File file = new File(fileLocation);
 
                     image.transferTo(file);*/
@@ -230,7 +230,7 @@ public class ProductService implements IProductService {
 
         for(Product product:products.getContent()){
             ProductInfo proInfo = product.getProductInfos().stream().
-                    filter(productInfo -> productInfo.isHighlight()).
+                    filter(ProductInfo::isHighlight).
                     collect(toSingleton());
 
             if(proInfo == null){

@@ -2,9 +2,9 @@ package com.anizzzz.product.sssweaterhouse.dataloader;
 
 import com.anizzzz.product.sssweaterhouse.constant.Size;
 import com.anizzzz.product.sssweaterhouse.constant.UserRole;
-import com.anizzzz.product.sssweaterhouse.model.ProductSize;
-import com.anizzzz.product.sssweaterhouse.model.Role;
-import com.anizzzz.product.sssweaterhouse.model.Users;
+import com.anizzzz.product.sssweaterhouse.model.product.ProductSize;
+import com.anizzzz.product.sssweaterhouse.model.user.Role;
+import com.anizzzz.product.sssweaterhouse.model.user.User;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductSizeService;
 import com.anizzzz.product.sssweaterhouse.service.user.IRoleService;
 import com.anizzzz.product.sssweaterhouse.service.user.IUserService;
@@ -55,7 +55,7 @@ public class DatabaseDataLoader implements ApplicationRunner {
         String adminUsername = "admin@sweaterhouse.com";
         if(!iUserService.findByUsername(adminUsername).isPresent()){
             iUserService.saveAdmin(
-                    new Users(
+                    new User(
                             "Admin",
                             "Sweaterhouse",
                             adminUsername,

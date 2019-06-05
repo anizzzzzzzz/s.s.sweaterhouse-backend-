@@ -1,7 +1,7 @@
 package com.anizzzz.product.sssweaterhouse.controller;
 
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
-import com.anizzzz.product.sssweaterhouse.model.Users;
+import com.anizzzz.product.sssweaterhouse.model.user.User;
 import com.anizzzz.product.sssweaterhouse.service.user.IUserService;
 import com.anizzzz.product.sssweaterhouse.validation.UserValidator;
 import com.anizzzz.product.sssweaterhouse.view.View;
@@ -33,15 +33,15 @@ public class UserController {
     }
 
     @PostMapping("/register/user")
-    public ResponseEntity<?> save(@Valid @RequestBody Users users, HttpServletRequest request){
-        ResponseMessage message=iUserService.saveUser(users, request);
+    public ResponseEntity<?> save(@Valid @RequestBody User user, HttpServletRequest request){
+        ResponseMessage message=iUserService.saveUser(user, request);
         return new ResponseEntity<>(message, message.getHttpStatus());
     }
 
     @GetMapping("/user")
     @JsonView({View.ShowUser.class})
     public ResponseEntity<?> findOne(@RequestParam String username){
-        Optional<Users> user=iUserService.findByUsername(username);
+        Optional<User> user=iUserService.findByUsername(username);
         if(user.isPresent()){
             return ResponseEntity.ok(user);
         }

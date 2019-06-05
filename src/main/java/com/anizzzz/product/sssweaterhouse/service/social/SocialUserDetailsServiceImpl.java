@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.social;
 
-import com.anizzzz.product.sssweaterhouse.model.Users;
+import com.anizzzz.product.sssweaterhouse.model.user.User;
 import com.anizzzz.product.sssweaterhouse.service.user.IUserService;
 import com.anizzzz.product.sssweaterhouse.social.SocialUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +25,19 @@ public class SocialUserDetailsServiceImpl implements SocialUserDetailsService {
 
     @Override
     public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
-        Users users = iUserService.findByUserId(userId);
-        if(users == null){
-            throw new UsernameNotFoundException("Cannot find users by id " + userId);
+        User user = iUserService.findByUserId(userId);
+        if(user == null){
+            throw new UsernameNotFoundException("Cannot find user by id " + userId);
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        users.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+        user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
 
         return new SocialUser(
-                users.getUsername(),
-                users.getPassword(),
+                user.getUsername(),
+                user.getPassword(),
                 userId,
-                users.getAccountId(),
+                user.getAccountId(),
                 authorities
         );
     }

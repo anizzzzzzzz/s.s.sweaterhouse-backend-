@@ -1,4 +1,4 @@
-package com.anizzzz.product.sssweaterhouse.model;
+package com.anizzzz.product.sssweaterhouse.model.user;
 
 import com.anizzzz.product.sssweaterhouse.annotation.ValidEmail;
 import com.anizzzz.product.sssweaterhouse.view.View;
@@ -7,13 +7,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -21,8 +19,7 @@ import java.util.List;
 @Table(name = "users")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class Users{
+public class User {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid",
@@ -66,8 +63,7 @@ public class Users{
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
     private Date passwordStamp;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
     @JoinTable(name="users_role",
             joinColumns = @JoinColumn(name="user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name="role_id", referencedColumnName = "id"))
@@ -82,11 +78,13 @@ public class Users{
     @JoinColumn(name = "reset_password_token_id")
     private PasswordResetToken passwordResetToken;
 
-    public Users(String firstname,
-                 String lastname,
-                 String username,
-                 String password,
-                 List<Role> roles){
+    public User(){}
+
+    public User(String firstname,
+                String lastname,
+                String username,
+                String password,
+                List<Role> roles){
         this.firstname=firstname;
         this.lastname = lastname;
         this.username = username;
@@ -94,15 +92,15 @@ public class Users{
         this.roles = roles;
     }
 
-    public Users(String firstname,
-                 String lastname,
-                 String username,
-                 String password,
-                 List<Role> roles,
-                 Date createdDate,
-                 Date activatedDate,
-                 boolean active,
-                 Date passwordStamp){
+    public User(String firstname,
+                String lastname,
+                String username,
+                String password,
+                List<Role> roles,
+                Date createdDate,
+                Date activatedDate,
+                boolean active,
+                Date passwordStamp){
         this.firstname=firstname;
         this.lastname = lastname;
         this.username = username;
@@ -114,16 +112,16 @@ public class Users{
         this.passwordStamp = passwordStamp;
     }
 
-    public Users(String firstname,
-                 String lastname,
-                 String username,
-                 String password,
-                 String userId,
-                 String accountId,
-                 Date createdDate,
-                 Date activatedDate,
-                 boolean active,
-                 Date passwordStamp){
+    public User(String firstname,
+                String lastname,
+                String username,
+                String password,
+                String userId,
+                String accountId,
+                Date createdDate,
+                Date activatedDate,
+                boolean active,
+                Date passwordStamp){
         this.firstname=firstname;
         this.lastname = lastname;
         this.username = username;
@@ -136,17 +134,17 @@ public class Users{
         this.passwordStamp = passwordStamp;
     }
 
-    public Users(String firstname,
-                 String lastname,
-                 String username,
-                 String password,
-                 String userId,
-                 String accountId,
-                 Date createdDate,
-                 Date activatedDate,
-                 boolean active,
-                 Date passwordStamp,
-                 List<Role> roles){
+    public User(String firstname,
+                String lastname,
+                String username,
+                String password,
+                String userId,
+                String accountId,
+                Date createdDate,
+                Date activatedDate,
+                boolean active,
+                Date passwordStamp,
+                List<Role> roles){
         this.firstname=firstname;
         this.lastname = lastname;
         this.username = username;
@@ -160,18 +158,18 @@ public class Users{
         this.roles=roles;
     }
 
-    public Users(String firstname,
-                 String middlename,
-                 String lastname,
-                 String username,
-                 String password,
-                 String userId,
-                 String accountId,
-                 Date createdDate,
-                 Date activatedDate,
-                 boolean active,
-                 Date passwordStamp,
-                 List<Role> roleList){
+    public User(String firstname,
+                String middlename,
+                String lastname,
+                String username,
+                String password,
+                String userId,
+                String accountId,
+                Date createdDate,
+                Date activatedDate,
+                boolean active,
+                Date passwordStamp,
+                List<Role> roleList){
         this.firstname=firstname;
         this.middlename=middlename;
         this.lastname = lastname;

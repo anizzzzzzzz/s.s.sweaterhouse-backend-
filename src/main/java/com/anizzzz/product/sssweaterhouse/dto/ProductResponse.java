@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.dto;
 
-import com.anizzzz.product.sssweaterhouse.model.ProductSize;
+import com.anizzzz.product.sssweaterhouse.model.product.ProductSize;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;

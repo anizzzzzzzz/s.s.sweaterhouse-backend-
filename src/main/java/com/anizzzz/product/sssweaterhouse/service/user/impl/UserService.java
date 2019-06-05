@@ -4,10 +4,10 @@ import com.anizzzz.product.sssweaterhouse.constant.UserRole;
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.DuplicateUserNameException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.EmailException;
-import com.anizzzz.product.sssweaterhouse.model.PasswordResetToken;
-import com.anizzzz.product.sssweaterhouse.model.Role;
-import com.anizzzz.product.sssweaterhouse.model.Users;
-import com.anizzzz.product.sssweaterhouse.model.VerificationToken;
+import com.anizzzz.product.sssweaterhouse.model.user.PasswordResetToken;
+import com.anizzzz.product.sssweaterhouse.model.user.Role;
+import com.anizzzz.product.sssweaterhouse.model.user.User;
+import com.anizzzz.product.sssweaterhouse.model.user.VerificationToken;
 import com.anizzzz.product.sssweaterhouse.repository.user.UserRepository;
 import com.anizzzz.product.sssweaterhouse.service.user.*;
 import com.anizzzz.product.sssweaterhouse.utils.TokenExpirationUtils;
@@ -58,81 +58,81 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Optional<Users> findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username.toLowerCase());
     }
 
     @Override
-    public ResponseMessage saveUser(Users users, HttpServletRequest request) {
-        Optional<Users> user1=userRepository.findByUsername(users.getUsername().toLowerCase());
+    public ResponseMessage saveUser(User user, HttpServletRequest request) {
+        Optional<User> user1=userRepository.findByUsername(user.getUsername().toLowerCase());
         if(user1.isPresent()){
             return new ResponseMessage(
-                    users.getUsername().toLowerCase()+" already exists. Try with another email id.",
+                    user.getUsername().toLowerCase()+" already exists. Try with another email id.",
                     HttpStatus.BAD_REQUEST
             );
         }
         else{
-            users.setUsername(users.getUsername().toLowerCase());
-            users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
-            users.setRoles(Collections.singletonList(iRoleService.findByName(UserRole.USER.toString())));
-            users.setCreatedDate(new Date());
-            users.setActive(false);
-            users.setPasswordStamp(new Date());
-            users.setVerificationToken(new VerificationToken(
+            user.setUsername(user.getUsername().toLowerCase());
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            user.setRoles(Collections.singletonList(iRoleService.findByName(UserRole.USER.toString())));
+            user.setCreatedDate(new Date());
+            user.setActive(false);
+            user.setPasswordStamp(new Date());
+            user.setVerificationToken(new VerificationToken(
                     randUUIDToken(),
                     setTokenExpirationDate(EXPIRATION),
-                    users));
-            userRepository.save(users);
+                    user));
+            userRepository.save(user);
 
             String subject = "Account Confirmation";
             StringBuilder body=new StringBuilder();
-            body.append("Welcome,<br/>Your users account with the e-mail address <strong>")
-                .append(users.getUsername())
+            body.append("Welcome,<br/>Your user account with the e-mail address <strong>")
+                .append(user.getUsername())
                 .append("</strong> has been created.<br/>")
                 .append("Please follow the link below to activate your account. The link will remain valid for 24 hrs. <br/>")
                 .append("<a href=\"")
-                .append(getServerAddress(request)).append("/users/activate-users?token=")
-                .append(users.getVerificationToken().getToken())
+                .append(getServerAddress(request)).append("/user/activate-user?token=")
+                .append(user.getVerificationToken().getToken())
                 .append("\">Activate account</a><br/>");
 
             try {
-                iEmailService.sendMail(users.getUsername(),subject, body.toString());
+                iEmailService.sendMail(user.getUsername(),subject, body.toString());
             } catch (Exception e) {
                 logger.error("Error sending email: "+e.getMessage());
-                throw new EmailException("Cannot Send Email to "+ users.getUsername(), e);
+                throw new EmailException("Cannot Send Email to "+ user.getUsername(), e);
             }
             return new ResponseMessage(
-                    users.getUsername()+" has been successfully registered.",
+                    user.getUsername()+" has been successfully registered.",
                     HttpStatus.OK
             );
         }
     }
 
     @Override
-    public ResponseMessage saveAdmin(Users users) {
-        Optional<Users> optional = userRepository.findByUsername(users.getUsername());
+    public ResponseMessage saveAdmin(User user) {
+        Optional<User> optional = userRepository.findByUsername(user.getUsername());
         if(optional.isPresent()){
             return new ResponseMessage(
-                    users.getUsername().toLowerCase()+" already exists. Try with another email id.",
+                    user.getUsername().toLowerCase()+" already exists. Try with another email id.",
                     HttpStatus.BAD_REQUEST
             );
         }
         else{
-            users.setUsername(users.getUsername().toLowerCase());
-            users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
-            if(users.getRoles().size()==0){
+            user.setUsername(user.getUsername().toLowerCase());
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            if(user.getRoles().size()==0){
                 List<Role> roles = new ArrayList<>();
                 roles.add(iRoleService.findByName(UserRole.ADMIN.toString()));
                 roles.add(iRoleService.findByName(UserRole.USER.toString()));
-                users.setRoles(roles);
+                user.setRoles(roles);
             }
-            users.setCreatedDate(new Date());
-            users.setActive(true);
-            users.setActivatedDate(new Date());
-            users.setPasswordStamp(new Date());
-            userRepository.save(users);
+            user.setCreatedDate(new Date());
+            user.setActive(true);
+            user.setActivatedDate(new Date());
+            user.setPasswordStamp(new Date());
+            userRepository.save(user);
             return new ResponseMessage(
-                    users.getUsername()+" has been successfully registered as admin.",
+                    user.getUsername()+" has been successfully registered as admin.",
                     HttpStatus.OK
             );
         }
@@ -140,7 +140,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseMessage resendVerificationToken(String username, HttpServletRequest request) {
-        Optional<Users> optional=findByUsername(username.toLowerCase());
+        Optional<User> optional=findByUsername(username.toLowerCase());
         if(optional.isPresent()){
             if(!optional.get().isActive()) {
                 VerificationToken verificationToken = optional.get().getVerificationToken();
@@ -153,7 +153,7 @@ public class UserService implements IUserService {
                 body.append("Hi "+optional.get().getFirstname()+",<br/>")
                         .append("Please follow the link below to activate your account. The link will remain valid for 24 hrs. <br/>")
                         .append("<a href=\"")
-                        .append(getServerAddress(request)).append("/users/activate-users?token=")
+                        .append(getServerAddress(request)).append("/user/activate-user?token=")
                         .append(optional.get().getVerificationToken().getToken())
                         .append("\">Activate account</a><br/>");
 
@@ -188,17 +188,17 @@ public class UserService implements IUserService {
     public ResponseMessage activateUser(String token) {
         Optional<VerificationToken> verificationToken=iVerificationTokenService.findByToken(token);
         if(verificationToken.isPresent()){
-            if(!verificationToken.get().getUsers().isActive()) {
+            if(!verificationToken.get().getUser().isActive()) {
                 if (TokenExpirationUtils.isVerificationTokenExpired(verificationToken.get().getExpiryDate())) {
                     return new ResponseMessage(
                             "Token is expired.",
                             HttpStatus.BAD_REQUEST
                     );
                 } else {
-                    Users users = verificationToken.get().getUsers();
-                    users.setActive(true);
-                    users.setActivatedDate(new Date());
-                    userRepository.save(users);
+                    User user = verificationToken.get().getUser();
+                    user.setActive(true);
+                    user.setActivatedDate(new Date());
+                    userRepository.save(user);
                     return new ResponseMessage(
                             "Your account has been activated",
                             HttpStatus.OK
@@ -222,20 +222,20 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseMessage activateUser(String token) {
-        Optional<Users> usersOptional = userRepository.findByVerificationToken_Token(token);
+        Optional<User> usersOptional = userRepository.findByVerificationToken_Token(token);
         if(usersOptional.isPresent()){
-            Users users = usersOptional.get();
-            if (!users.isActive()){
-                if (TokenExpirationUtils.isVerificationTokenExpired(users.getVerificationToken().getExpiryDate())) {
+            User user = usersOptional.get();
+            if (!user.isActive()){
+                if (TokenExpirationUtils.isVerificationTokenExpired(user.getVerificationToken().getExpiryDate())) {
                     return new ResponseMessage(
                             "Token is expired.",
                             HttpStatus.BAD_REQUEST
                     );
                 }
                 else {
-                    users.setActive(true);
-                    users.setActivatedDate(new Date());
-                    userRepository.save(users);
+                    user.setActive(true);
+                    user.setActivatedDate(new Date());
+                    userRepository.save(user);
                     return new ResponseMessage(
                             "Your account has been activated",
                             HttpStatus.OK
@@ -259,30 +259,30 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseMessage sendResetPasswordToken(String username, HttpServletRequest request) {
-        Optional<Users> optional=findByUsername(username.toLowerCase());
+        Optional<User> optional=findByUsername(username.toLowerCase());
 
         if(optional.isPresent()){
-            Users users =optional.get();
-            if(users.isActive()) {
-                PasswordResetToken passwordResetToken = users.getPasswordResetToken();
+            User user =optional.get();
+            if(user.isActive()) {
+                PasswordResetToken passwordResetToken = user.getPasswordResetToken();
                 if(passwordResetToken!=null) {
                     passwordResetToken.setToken(randUUIDToken());
                     passwordResetToken.setExpiryDate(setTokenExpirationDate(EXPIRATION));
                     iPasswordResetService.save(passwordResetToken);
                 }
                 else{
-                    users.setPasswordResetToken(
+                    user.setPasswordResetToken(
                             new PasswordResetToken(
                                     randUUIDToken(),
                                     setTokenExpirationDate(EXPIRATION),
-                                    users)
+                                    user)
                     );
-                    userRepository.save(users);
+                    userRepository.save(user);
                 }
                 //#TODO
                 //send email for password reset too and clicking that link would(not entering token).
                 return new ResponseMessage(
-                        "Password reset Token has been send to email : " + users.getUsername().toLowerCase() + ".",
+                        "Password reset Token has been send to email : " + user.getUsername().toLowerCase() + ".",
                         HttpStatus.OK
                 );
             }
@@ -303,19 +303,19 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseMessage resetUserPassword(String token, String username,String password) {
-        Optional<Users> optional=findByUsername(username.toLowerCase());
+        Optional<User> optional=findByUsername(username.toLowerCase());
 
         if(optional.isPresent()){
             if(optional.get().isActive()) {
                 Optional<PasswordResetToken> tokenOptional = iPasswordResetService.findByToken(token);
                 if (tokenOptional.isPresent()) {
                     if (!TokenExpirationUtils.isVerificationTokenExpired(tokenOptional.get().getExpiryDate())) {
-                        if (Objects.equals(optional.get().getId(), tokenOptional.get().getUsers().getId())) {
+                        if (Objects.equals(optional.get().getId(), tokenOptional.get().getUser().getId())) {
                             //resetting password
-                            Users users = optional.get();
-                            users.setPassword(bCryptPasswordEncoder.encode(password));
-                            users.setPasswordStamp(new Date());
-                            userRepository.save(users);
+                            User user = optional.get();
+                            user.setPassword(bCryptPasswordEncoder.encode(password));
+                            user.setPasswordStamp(new Date());
+                            userRepository.save(user);
 
                             return new ResponseMessage(
                                     "Password is reset.",
@@ -357,21 +357,21 @@ public class UserService implements IUserService {
 
     //----------------------------- Social Login -----------------------------------------
     @Override
-    public Users findByUserId(String userId) {
-        Optional<Users> user = userRepository.findByUserId(userId);
+    public User findByUserId(String userId) {
+        Optional<User> user = userRepository.findByUserId(userId);
         return user.orElse(null);
     }
 
     @Override
-    public Users findByUserIdAndAccountId(String userId, String accountId) {
-        Optional<Users> user = userRepository.findByUserIdAndAccountId(userId, accountId);
+    public User findByUserIdAndAccountId(String userId, String accountId) {
+        Optional<User> user = userRepository.findByUserIdAndAccountId(userId, accountId);
         return user.orElse(null);
     }
 
     @Override
     public String findAvailableUserName(String userName_prefix, String accountProviderId) {
         String username=userName_prefix+"@"+accountProviderId+".com";
-        Optional<Users> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
 
         if(!user.isPresent()){
             return username;
@@ -388,14 +388,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Users createAppUser(Connection<?> connection) throws DuplicateUserNameException {
+    public User createAppUser(Connection<?> connection) throws DuplicateUserNameException {
         try{
             ConnectionKey key = connection.getKey();
             logger.info("Key = ( "+key.getProviderId()+" , "+key.getProviderUserId()+" )");
 
             UserProfile userProfile=connection.fetchUserProfile();
 
-            Users appUsers =findByUserIdAndAccountId(key.getProviderUserId(),key.getProviderId());
+            User appUsers =findByUserIdAndAccountId(key.getProviderUserId(),key.getProviderId());
 
             if(appUsers !=null){
                 return appUsers;
@@ -414,7 +414,7 @@ public class UserService implements IUserService {
                 }
             }
 
-            appUsers = new Users(
+            appUsers = new User(
                     userProfile.getFirstName(),
                     userProfile.getLastName(),
                     username,

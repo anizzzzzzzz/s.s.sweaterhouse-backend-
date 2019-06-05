@@ -2,7 +2,7 @@ package com.anizzzz.product.sssweaterhouse.service.product;
 
 import com.anizzzz.product.sssweaterhouse.dto.ProductResponse;
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
-import com.anizzzz.product.sssweaterhouse.model.Product;
+import com.anizzzz.product.sssweaterhouse.model.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;

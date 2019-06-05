@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.product.impl;
 
-import com.anizzzz.product.sssweaterhouse.model.ProductSize;
+import com.anizzzz.product.sssweaterhouse.model.product.ProductSize;
 import com.anizzzz.product.sssweaterhouse.repository.product.ProductSizeRepository;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductSizeService;
 import org.springframework.beans.factory.annotation.Autowired;

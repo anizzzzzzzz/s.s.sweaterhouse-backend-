@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.user.impl;
 
-import com.anizzzz.product.sssweaterhouse.model.VerificationToken;
+import com.anizzzz.product.sssweaterhouse.model.user.VerificationToken;
 import com.anizzzz.product.sssweaterhouse.repository.user.VerificationTokenRepository;
 import com.anizzzz.product.sssweaterhouse.service.user.IVerificationTokenService;
 import org.springframework.beans.factory.annotation.Autowired;

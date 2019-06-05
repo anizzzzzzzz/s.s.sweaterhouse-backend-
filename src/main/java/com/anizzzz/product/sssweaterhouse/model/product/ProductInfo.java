@@ -1,4 +1,4 @@
-package com.anizzzz.product.sssweaterhouse.model;
+package com.anizzzz.product.sssweaterhouse.model.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +14,6 @@ import javax.persistence.Table;
 @Table(name = "product_info")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class ProductInfo {
     @Id
     @GeneratedValue(generator="system-uuid")
@@ -27,6 +26,8 @@ public class ProductInfo {
     private String type;
     private String location;
     private boolean highlight;
+
+    public ProductInfo(){}
 
     public ProductInfo(String name, String extension,String type, String location, boolean highlight){
         this.name=name;

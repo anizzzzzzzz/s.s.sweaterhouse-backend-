@@ -1,6 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.user.impl;
 
-import com.anizzzz.product.sssweaterhouse.model.Role;
+import com.anizzzz.product.sssweaterhouse.model.user.Role;
 import com.anizzzz.product.sssweaterhouse.repository.user.RoleRepository;
 import com.anizzzz.product.sssweaterhouse.service.user.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
