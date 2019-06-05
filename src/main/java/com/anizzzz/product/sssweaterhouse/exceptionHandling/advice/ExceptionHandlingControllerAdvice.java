@@ -177,7 +177,7 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
     public ResponseEntity<ApiError> handleUserNotFoundException(final Exception ex) {
         logger.error(ex.getClass().getName());
         logger.error(ex.getMessage());
-        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "User not found.");
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "Users not found.");
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 

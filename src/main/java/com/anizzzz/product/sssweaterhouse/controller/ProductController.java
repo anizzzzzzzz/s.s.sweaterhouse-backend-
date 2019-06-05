@@ -1,7 +1,7 @@
 package com.anizzzz.product.sssweaterhouse.controller;
 
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
-import com.anizzzz.product.sssweaterhouse.service.IProductService;
+import com.anizzzz.product.sssweaterhouse.service.product.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class ProductController {
         this.iProductService = iProductService;
     }
 
-    @PostMapping("/upload-images")
+    @PostMapping("/upload-products")
     public ResponseEntity<?> uploadImages(@RequestParam("images") MultipartFile[] images,
                                         @RequestParam("name") String name,
                                         @RequestParam("type") String type,

@@ -1,7 +1,7 @@
 package com.anizzzz.product.sssweaterhouse.config;
 
-import com.anizzzz.product.sssweaterhouse.service.IUserService;
-import com.anizzzz.product.sssweaterhouse.service.serviceImpl.social.ConnectionSignupImpl;
+import com.anizzzz.product.sssweaterhouse.service.user.IUserService;
+import com.anizzzz.product.sssweaterhouse.service.social.ConnectionSignupImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

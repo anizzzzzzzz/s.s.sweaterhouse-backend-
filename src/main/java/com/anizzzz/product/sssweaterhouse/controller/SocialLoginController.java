@@ -1,7 +1,7 @@
 package com.anizzzz.product.sssweaterhouse.controller;
 
 import com.anizzzz.product.sssweaterhouse.security.jwtutil.dto.JwtAuthResponse;
-import com.anizzzz.product.sssweaterhouse.service.IAuthenticationService;
+import com.anizzzz.product.sssweaterhouse.service.user.IAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 
 public class JwtUser implements UserDetails {
-    private final Long id;
+    private final String id;
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
@@ -18,7 +18,7 @@ public class JwtUser implements UserDetails {
     private final Date activatedDate;
     private final Date passwordStamp;
 
-    public JwtUser(Long id,
+    public JwtUser(String id,
                    String username,
                    String password,
                    Collection<? extends GrantedAuthority> authorities,
@@ -84,4 +84,8 @@ public class JwtUser implements UserDetails {
     public Date getActivatedDate(){return activatedDate;}
 
     public Date getPasswordStamp(){return passwordStamp;}
+
+    public String getId() {
+        return id;
+    }
 }

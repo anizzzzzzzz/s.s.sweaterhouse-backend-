@@ -2,17 +2,25 @@ package com.anizzzz.product.sssweaterhouse.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Data
-@AllArgsConstructor
 @Entity
 @Table(name = "product_info")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductInfo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid",
+            strategy = "uuid")
+    private String id;
 
     private String name;
     private String extension;

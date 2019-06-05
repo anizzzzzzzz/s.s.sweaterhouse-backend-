@@ -3,7 +3,7 @@ package com.anizzzz.product.sssweaterhouse.config;
 import com.anizzzz.product.sssweaterhouse.security.JwtAuthenticationEntryPoint;
 import com.anizzzz.product.sssweaterhouse.security.JwtAuthenticationFilter;
 import com.anizzzz.product.sssweaterhouse.security.jwtutil.JwtTokenUtil;
-import com.anizzzz.product.sssweaterhouse.service.serviceImpl.UserDetailsServiceImpl;
+import com.anizzzz.product.sssweaterhouse.service.user.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -60,7 +60,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
                 .antMatchers(HttpMethod.GET, "/user/activate-user").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/send-reset-password-token").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/reset-password").permitAll()
-                .antMatchers(HttpMethod.POST, "/upload-images").permitAll()
+                .antMatchers(HttpMethod.POST, "/upload-products").permitAll()
                 .antMatchers(HttpMethod.POST,"/find-all-by-type").permitAll()
                 .antMatchers(HttpMethod.GET, "/find-all").permitAll()
                 .antMatchers(HttpMethod.POST, "/find-one").permitAll()
