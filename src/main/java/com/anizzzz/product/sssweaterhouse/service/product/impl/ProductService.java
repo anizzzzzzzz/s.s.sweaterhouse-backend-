@@ -1,6 +1,5 @@
 package com.anizzzz.product.sssweaterhouse.service.product.impl;
 
-import com.anizzzz.product.sssweaterhouse.dto.ProductResponse;
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ExtensionMismatchException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ProductException;
@@ -12,12 +11,9 @@ import com.anizzzz.product.sssweaterhouse.service.product.IProductInfoService;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductService;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductSizeService;
 import com.anizzzz.product.sssweaterhouse.utils.ICompresserUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -26,9 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService implements IProductService {
@@ -92,7 +85,15 @@ public class ProductService implements IProductService {
                     else if(extension.equalsIgnoreCase("png")) {
                         pngCompresser.compressImages(image.getInputStream(), fileLocation);
                     }
-                    productInfos.add(new ProductInfo(fileName,extension,imageType(extension),fileLocation,isSelected));
+
+                    // since the images are hosted using the apache2,
+                    // so only writing the path from imagaes
+                    // ie; handwarmer/123123123.jpeg
+                    productInfos.add(
+                            new ProductInfo(
+                                    fileName,extension,imageType(extension),type + "/" + fileNameWithExt,isSelected
+                            )
+                    );
                     i++;
                 }
                 else{
@@ -111,17 +112,13 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Optional<Product> findOne(Long id) {
-        return null;
-    }
+    public Optional<Product> findByIdAndProductCode(String id, String productCode) {
+//        Optional<Product> product=productRepository.findByProductCode(productCode);
 
-    @Override
-    public ResponseMessage findByProductCode(String productCode) {
-        Optional<Product> product=productRepository.findByProductCode(productCode);
-
-        return product.map(this::findSelectedProduct).
+        /*return product.map(this::findSelectedProduct).
                 orElseGet(() ->
-                        new ResponseMessage("Cannot find product with specified product code", HttpStatus.NOT_FOUND));
+                        new ResponseMessage("Cannot find product with specified product code", HttpStatus.NOT_FOUND));*/
+        return productRepository.findByIdAndProductCode(id, productCode);
     }
 
     @Override
@@ -130,51 +127,49 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> findAll(Pageable pageable) throws IOException {
-        Page<Product> products=productRepository.findAllByOrderByCreatedDateDesc(pageable);
-        return getProductResponse(products);
+    public Page<Product> findAll(Pageable pageable) throws IOException {
+//        Page<Product> products=productRepository.findAllByOrderByCreatedDateDesc(pageable);
+//        return getProductResponse(products);
+        return productRepository.findAllByOrderByCreatedDateDesc(pageable);
     }
 
     @Override
-    public Page<ProductResponse> findAllBySale(Pageable pageable) throws IOException {
-        Page<Product> products=productRepository.findAllBySaleOrderByCreatedDateDesc(pageable,true);
-        return getProductResponse(products);
+    public Page<Product> findAllBySale(Pageable pageable) throws IOException {
+        /*Page<Product> products=productRepository.findAllBySaleOrderByCreatedDateDesc(pageable,true);
+        return getProductResponse(products);*/
+        return productRepository.findAllBySaleOrderByCreatedDateDesc(pageable,true);
     }
 
     @Override
-    public Page<ProductResponse> findAllByType(Pageable pageable, String type) throws IOException {
-        Page<Product> products=productRepository.findAllByTypeOrderByCreatedDateDesc(pageable,type);
-        return getProductResponse(products);
+    public Page<Product> findAllByType(Pageable pageable, String type) throws IOException {
+        return productRepository.findAllByTypeOrderByCreatedDateDesc(pageable,type);
     }
 
     @Override
-    public Page<ProductResponse> findAllBySaleAndType(Pageable pageable, String type) throws IOException {
-        Page<Product> products=productRepository.findAllBySaleAndTypeOrderByCreatedDateDesc(pageable,true,type);
-        return getProductResponse(products);
+    public Page<Product> findAllBySaleAndType(Pageable pageable, String type) throws IOException {
+        return productRepository.findAllBySaleAndTypeOrderByCreatedDateDesc(pageable,true,type);
     }
 
     @Override
-    public Page<ProductResponse> findAllByTypeAndPriceBetween(Pageable pageable, String type, double priceBegin, double priceEnd)
+    public Page<Product> findAllByTypeAndPriceBetween(Pageable pageable, String type, double priceBegin, double priceEnd)
             throws IOException {
-        Page<Product> products=productRepository.findAllByTypeAndPriceBetweenOrderByCreatedDateDesc
+        return productRepository.findAllByTypeAndPriceBetweenOrderByCreatedDateDesc
                 (pageable,
-                type,
-                priceBegin,
-                priceEnd
-        );
-        return getProductResponse(products);
+                        type,
+                        priceBegin,
+                        priceEnd
+                );
     }
 
     @Override
-    public Page<ProductResponse> findAllByTypeAndSaleAndPriceBetween(Pageable pageable, String type, boolean sale, double priceBegin, double priceEnd) throws IOException {
-        Page<Product> products=productRepository.findAllByTypeAndSaleAndPriceBetweenOrderByCreatedDateDesc(
+    public Page<Product> findAllByTypeAndSaleAndPriceBetween(Pageable pageable, String type, boolean sale, double priceBegin, double priceEnd) throws IOException {
+        return productRepository.findAllByTypeAndSaleAndPriceBetweenOrderByCreatedDateDesc(
                 pageable,
                 type,
                 true,
                 priceBegin,
                 priceEnd
         );
-        return getProductResponse(products);
     }
 
     private String getProductCode(String type){
@@ -223,150 +218,5 @@ public class ProductService implements IProductService {
             return MediaType.IMAGE_PNG_VALUE;
         else
             return null;
-    }
-
-    private Page<ProductResponse> getProductResponse(Page<Product> products) throws IOException {
-        List<ProductResponse> productResponses=new ArrayList<>();
-
-        for(Product product:products.getContent()){
-            ProductInfo proInfo = product.getProductInfos().stream().
-                    filter(ProductInfo::isHighlight).
-                    collect(toSingleton());
-
-            if(proInfo == null){
-                proInfo=product.getProductInfos().stream().findFirst().get();
-            }
-
-            productResponses.add(
-                    new ProductResponse(
-                            product.getName(),
-                            product.getProductCode(),
-                            product.getType(),
-                            product.getPrice(),
-                            product.getSize(),
-                            IOUtils.toByteArray(FileUtils.openInputStream(new File(proInfo.getLocation()))),
-                            proInfo.getType(),
-                            product.isSale()
-                    )
-            );
-        }
-        return new Page<ProductResponse>() {
-            @Override
-            public int getTotalPages() {
-                return products.getTotalPages();
-            }
-
-            @Override
-            public long getTotalElements() {
-                return products.getTotalElements();
-            }
-
-            @Override
-            public <U> Page<U> map(Function<? super ProductResponse, ? extends U> function) {
-                return null;
-            }
-
-            @Override
-            public int getNumber() {
-                return products.getNumber();
-            }
-
-            @Override
-            public int getSize() {
-                return products.getSize();
-            }
-
-            @Override
-            public int getNumberOfElements() {
-                return products.getNumberOfElements();
-            }
-
-            @Override
-            public List<ProductResponse> getContent() {
-                return productResponses;
-            }
-
-            @Override
-            public boolean hasContent() {
-                return products.hasContent();
-            }
-
-            @Override
-            public Sort getSort() {
-                return null;
-            }
-
-            @Override
-            public boolean isFirst() {
-                return products.isFirst();
-            }
-
-            @Override
-            public boolean isLast() {
-                return products.isLast();
-            }
-
-            @Override
-            public boolean hasNext() {
-                return products.hasNext();
-            }
-
-            @Override
-            public boolean hasPrevious() {
-                return products.hasPrevious();
-            }
-
-            @Override
-            public Pageable nextPageable() {
-                return null;
-            }
-
-            @Override
-            public Pageable previousPageable() {
-                return null;
-            }
-
-            @Override
-            public Iterator<ProductResponse> iterator() {
-                return null;
-            }
-        };
-    }
-
-    private ResponseMessage findSelectedProduct(Product product){
-        List<HashMap<String,Object>> images=new ArrayList<>();
-
-        product.getProductInfos().forEach(image->{
-            HashMap<String,Object> imagesInfo=new HashMap<>();
-            try {
-                imagesInfo.put("name",image.getName());
-                imagesInfo.put("type",image.getType());
-                imagesInfo.put("extension",image.getExtension());
-                imagesInfo.put("image",IOUtils.toByteArray(FileUtils.openInputStream(new File(image.getLocation()))));
-                imagesInfo.put("highlighted",image.isHighlight());
-                images.add(imagesInfo);
-            } catch (IOException e) {
-                throw new ProductException("Error occured while fetching product",e);
-            }
-        });
-
-        return new ResponseMessage("Successfully fetched product",
-                    new ProductResponse(
-                            product.getName(),
-                            product.getProductCode(),
-                            product.getType(),
-                            product.getPrice(),
-                            product.getSize(),
-                            images
-                    ),
-                    HttpStatus.OK
-                );
-    }
-
-    private static <T> Collector<T, ?, T> toSingleton() {
-        return Collectors.collectingAndThen(
-                Collectors.toList(),
-                list -> list.size() == 1 ? list.get(0) : null
-        );
     }
 }

@@ -1,0 +1,144 @@
+private Page<ProductResponse> getProductResponse(Page<Product> products) throws IOException {
+        List<ProductResponse> productResponses=new ArrayList<>();
+
+        for(Product product:products.getContent()){
+            ProductInfo proInfo = product.getProductInfos().stream().
+                    filter(ProductInfo::isHighlight).
+                    collect(toSingleton());
+
+            if(proInfo == null){
+                proInfo=product.getProductInfos().stream().findFirst().get();
+            }
+
+            productResponses.add(
+                    new ProductResponse(
+                            product.getName(),
+                            product.getProductCode(),
+                            product.getType(),
+                            product.getPrice(),
+                            product.getSize(),
+                            IOUtils.toByteArray(FileUtils.openInputStream(new File(proInfo.getLocation()))),
+                            proInfo.getType(),
+                            product.isSale()
+                    )
+            );
+        }
+        return new Page<ProductResponse>() {
+            @Override
+            public int getTotalPages() {
+                return products.getTotalPages();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return products.getTotalElements();
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super ProductResponse, ? extends U> function) {
+                return null;
+            }
+
+            @Override
+            public int getNumber() {
+                return products.getNumber();
+            }
+
+            @Override
+            public int getSize() {
+                return products.getSize();
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return products.getNumberOfElements();
+            }
+
+            @Override
+            public List<ProductResponse> getContent() {
+                return productResponses;
+            }
+
+            @Override
+            public boolean hasContent() {
+                return products.hasContent();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return products.isFirst();
+            }
+
+            @Override
+            public boolean isLast() {
+                return products.isLast();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return products.hasNext();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return products.hasPrevious();
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public Iterator<ProductResponse> iterator() {
+                return null;
+            }
+        };
+    }
+
+    private ResponseMessage findSelectedProduct(Product product){
+        List<HashMap<String,Object>> images=new ArrayList<>();
+
+        product.getProductInfos().forEach(image->{
+            HashMap<String,Object> imagesInfo=new HashMap<>();
+            try {
+                imagesInfo.put("name",image.getName());
+                imagesInfo.put("type",image.getType());
+                imagesInfo.put("extension",image.getExtension());
+                imagesInfo.put("image",IOUtils.toByteArray(FileUtils.openInputStream(new File(image.getLocation()))));
+                imagesInfo.put("highlighted",image.isHighlight());
+                images.add(imagesInfo);
+            } catch (IOException e) {
+                throw new ProductException("Error occured while fetching product",e);
+            }
+        });
+
+        return new ResponseMessage("Successfully fetched product",
+                    new ProductResponse(
+                            product.getName(),
+                            product.getProductCode(),
+                            product.getType(),
+                            product.getPrice(),
+                            product.getSize(),
+                            images
+                    ),
+                    HttpStatus.OK
+                );
+    }
+
+    private static <T> Collector<T, ?, T> toSingleton() {
+        return Collectors.collectingAndThen(
+                Collectors.toList(),
+                list -> list.size() == 1 ? list.get(0) : null
+        );
+     }

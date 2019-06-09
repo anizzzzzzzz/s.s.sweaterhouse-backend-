@@ -1,9 +1,11 @@
 package com.anizzzz.product.sssweaterhouse.controller;
 
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
+import com.anizzzz.product.sssweaterhouse.model.product.Product;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 public class ProductController {
@@ -45,9 +48,12 @@ public class ProductController {
     }
 
     @PostMapping("/find-one")
-    public ResponseEntity<?> findOneProduct(@RequestParam String productCode){
-        ResponseMessage responseMessage=iProductService.findByProductCode(productCode);
-        return new ResponseEntity<Object>(responseMessage, responseMessage.getHttpStatus());
+    public ResponseEntity<?> findByIdAndProductCode(@RequestParam String id, @RequestParam String productCode){
+        Optional<Product> product=iProductService.findByIdAndProductCode(id, productCode);
+        if(product.isPresent())
+            return ResponseEntity.ok(product.get());
+        return ResponseEntity.badRequest()
+                .body(new ResponseMessage("Cannot find product with specified detail.", HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping("/find-all-sales")

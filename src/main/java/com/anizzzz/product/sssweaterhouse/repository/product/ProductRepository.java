@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, String> {
-    Optional<Product> findByProductCode(String productCode);
+    Optional<Product> findByIdAndProductCode(String id, String productCode);
 
     Page<Product> findAllByOrderByCreatedDateDesc(Pageable pageable);
 
