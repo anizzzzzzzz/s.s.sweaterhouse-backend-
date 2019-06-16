@@ -41,7 +41,8 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ResponseMessage Save(MultipartFile[] images,String name, String type, double price, boolean sale, String[] size, String selectedImage){
+    public ResponseMessage save(MultipartFile[] images, String name, String type,
+                                double price, boolean sale, String[] size, String selectedImage){
         List<ProductInfo> productInfos=new ArrayList<>();
         List<ProductSize> sizes=new ArrayList<>();
 
@@ -55,7 +56,8 @@ public class ProductService implements IProductService {
         int i=0;
         for(MultipartFile image:images) {
             try{
-                String extension = image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
+                String extension = image.getOriginalFilename()
+                        .substring(Objects.requireNonNull(image.getOriginalFilename()).lastIndexOf('.')+1);
                 if(extension.equalsIgnoreCase("jpeg") ||
                         extension.equalsIgnoreCase("png") ||
                         extension.equalsIgnoreCase("jpg")) {
@@ -109,6 +111,11 @@ public class ProductService implements IProductService {
         }
         productRepository.save(new Product(name, productCode,type,price,sale,new Date(),sizes,productInfos));
         return new ResponseMessage("Product have been saved successfully.", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseMessage update(MultipartFile[] imamges, Product product) {
+        return null;
     }
 
     @Override

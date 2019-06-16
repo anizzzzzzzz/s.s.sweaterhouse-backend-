@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
-    ResponseMessage Save(MultipartFile[] images,String name, String type, double price, boolean sale, String[] size, String selectedImage)
+    ResponseMessage save(MultipartFile[] images, String name, String type, double price, boolean sale, String[] size, String selectedImage)
             throws IOException;
+
+    ResponseMessage update(MultipartFile[] imamges, Product product);
 
     Optional<Product> findByIdAndProductCode(String id, String productCode);
 

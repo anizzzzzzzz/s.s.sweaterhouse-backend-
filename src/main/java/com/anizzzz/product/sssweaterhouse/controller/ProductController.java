@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,8 +30,16 @@ public class ProductController {
                                         @RequestParam("sale") Boolean sale,
                                         @RequestParam("size") String[] size,
                                         @RequestParam("selectedImage") String selectedImage) throws IOException {
-        ResponseMessage response=iProductService.Save(images, name, type, price ,sale,size,selectedImage);
+        ResponseMessage response=iProductService.save(images, name, type, price ,sale,size,selectedImage);
         return new ResponseEntity<Object>(response,response.getHttpStatus());
+    }
+
+    @PostMapping(value = "/update-product", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> updateProduct(@RequestParam("product") Product product,
+                                           @RequestParam("images") MultipartFile[] images){
+        System.out.println(product);
+        return ResponseEntity.ok().build();
+
     }
 
     @GetMapping("/find-all")
