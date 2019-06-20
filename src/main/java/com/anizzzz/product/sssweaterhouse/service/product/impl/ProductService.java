@@ -1,5 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.product.impl;
 
+import com.anizzzz.product.sssweaterhouse.dto.ProductRequest;
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ExtensionMismatchException;
 import com.anizzzz.product.sssweaterhouse.exceptionHandling.exceptions.ProductException;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService implements IProductService {
@@ -44,17 +46,35 @@ public class ProductService implements IProductService {
     public ResponseMessage save(MultipartFile[] images, String name, String type,
                                 double price, boolean sale, String[] size, String selectedImage){
         List<ProductInfo> productInfos=new ArrayList<>();
-        List<ProductSize> sizes=new ArrayList<>();
-
-        Arrays.stream(size).forEach(sz->{
-            sizes.add(iProductSizeService.findBySize(sz));
-        });
 
         String folderLocation=System.getProperty("user.dir") + "/images/"+type;
+        File imageFolder = new File(folderLocation);
+
+        if (!imageFolder.exists())
+            imageFolder.mkdirs();
 
         String productCode=getProductCode(type);
+        saveImages(productInfos, images, selectedImage, folderLocation, type);
+
+        productRepository.save(
+                new Product(
+                        name,
+                        productCode,
+                        type,
+                        price,
+                        sale,
+                        new Date(),
+                        Arrays.stream(size).map(iProductSizeService::findBySize).collect(Collectors.toList()),
+                        productInfos
+                )
+        );
+        return new ResponseMessage("Product have been saved successfully.", HttpStatus.OK);
+    }
+
+    private void saveImages(List<ProductInfo> productInfos, MultipartFile[] mFiles,
+                            String selectedImage, String folderLocation, String type){
         int i=0;
-        for(MultipartFile image:images) {
+        for(MultipartFile image:mFiles) {
             try{
                 String extension = image.getOriginalFilename()
                         .substring(Objects.requireNonNull(image.getOriginalFilename()).lastIndexOf('.')+1);
@@ -63,8 +83,13 @@ public class ProductService implements IProductService {
                         extension.equalsIgnoreCase("jpg")) {
                     boolean isSelected=false;
                     if(selectedImage!=null){
-                        if(selectedImage.equalsIgnoreCase(image.getOriginalFilename()))
-                            isSelected=true;
+                        if(selectedImage.endsWith(".jpeg") || selectedImage.endsWith(".png")
+                                || selectedImage.endsWith(".jpg")) {
+                            if (selectedImage.equalsIgnoreCase(image.getOriginalFilename())){
+                                isSelected = true;
+                                productInfos.forEach(prod -> prod.setHighlight(false));
+                            }
+                        }
                     }
                     else {
                         if(i==0)
@@ -72,10 +97,6 @@ public class ProductService implements IProductService {
                     }
                     String fileNameWithExt = getRandomFileName(extension);
                     String fileName = fileNameWithExt.substring(0,fileNameWithExt.lastIndexOf('.'));
-                    File imageFolder = new File(folderLocation);
-
-                    if (!imageFolder.exists())
-                        imageFolder.mkdirs();
 
                     String fileLocation = folderLocation+ "/" + fileNameWithExt;
                     /*File file = new File(fileLocation);
@@ -93,7 +114,11 @@ public class ProductService implements IProductService {
                     // ie; handwarmer/123123123.jpeg
                     productInfos.add(
                             new ProductInfo(
-                                    fileName,extension,imageType(extension),type + "/" + fileNameWithExt,isSelected
+                                    fileName,
+                                    extension,
+                                    imageType(extension),
+                                    type + "/" + fileNameWithExt,
+                                    isSelected
                             )
                     );
                     i++;
@@ -109,22 +134,30 @@ public class ProductService implements IProductService {
                 throw new ExtensionMismatchException();
             }
         }
-        productRepository.save(new Product(name, productCode,type,price,sale,new Date(),sizes,productInfos));
-        return new ResponseMessage("Product have been saved successfully.", HttpStatus.OK);
     }
 
     @Override
-    public ResponseMessage update(MultipartFile[] imamges, Product product) {
+    public ResponseMessage update(MultipartFile[] images, ProductRequest productRequest) {
+        Optional<Product> productOptional = findByIdAndProductCode(productRequest.getId(),
+                productRequest.getProductCode());
+
+        if(productOptional.isPresent()){
+            Product product = productOptional.get();
+
+            String folderLocation=System.getProperty("user.dir") + "/images/"+ product.getType();
+            File imageFolder = new File(folderLocation);
+            if (!imageFolder.exists())
+                imageFolder.mkdirs();
+
+            // Deleting the ProductInfos selected by user.
+//            product.getProductInfos().remo
+        }
+
         return null;
     }
 
     @Override
     public Optional<Product> findByIdAndProductCode(String id, String productCode) {
-//        Optional<Product> product=productRepository.findByProductCode(productCode);
-
-        /*return product.map(this::findSelectedProduct).
-                orElseGet(() ->
-                        new ResponseMessage("Cannot find product with specified product code", HttpStatus.NOT_FOUND));*/
         return productRepository.findByIdAndProductCode(id, productCode);
     }
 
@@ -180,42 +213,30 @@ public class ProductService implements IProductService {
     }
 
     private String getProductCode(String type){
-        long index;
-        List<Product> products=findAllByType(type);
-        if(products == null){
-            index=1;
-        }
-        else{
-            index=products.size()+1;
-        }
+        Long index = productRepository.countAllByType(type);
 
         if(type.equalsIgnoreCase("sweater")){
-            return "SWT-" + Long.toString(index);
+            return "SWT-" + Long.toString(index + 1);
         }
         else if(type.equalsIgnoreCase("Handwarmer")) {
-            return "HNW-" + Long.toString(index);
+            return "HNW-" + Long.toString(index + 1);
         }
         else if(type.equalsIgnoreCase("Jacket")) {
-            return "JCK-" + Long.toString(index);
+            return "JCK-" + Long.toString(index + 1);
         }
         else if(type.equalsIgnoreCase("Shock")){
-            return "SCK-" + Long.toString(index);
+            return "SCK-" + Long.toString(index + 1);
         }
         else if(type.equalsIgnoreCase("Trouser")){
-            return "TRS-" + Long.toString(index);
+            return "TRS-" + Long.toString(index + 1);
         }
         else{
-            return "OTHER-" +  Long.toString(index);
+            return "OTHER-" +  Long.toString(index + 1);
         }
     }
 
     private String getRandomFileName(String extension){
-        String fileName = UUID.randomUUID().toString();
-
-        while(iProductInfoService.findByName(fileName).isPresent()){
-            fileName = UUID.randomUUID().toString();
-        }
-        return fileName +"."+ extension;
+        return UUID.randomUUID().toString() +"."+ extension;
     }
 
     private String imageType(String extension){

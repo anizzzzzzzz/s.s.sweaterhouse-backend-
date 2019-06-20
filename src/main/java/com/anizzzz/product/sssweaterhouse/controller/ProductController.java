@@ -1,8 +1,11 @@
 package com.anizzzz.product.sssweaterhouse.controller;
 
+import com.anizzzz.product.sssweaterhouse.dto.ProductRequest;
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.model.product.Product;
 import com.anizzzz.product.sssweaterhouse.service.product.IProductService;
+import com.anizzzz.product.sssweaterhouse.view.View;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -35,24 +38,28 @@ public class ProductController {
     }
 
     @PostMapping(value = "/update-product", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> updateProduct(@RequestParam("product") Product product,
-                                           @RequestParam("images") MultipartFile[] images){
+    public ResponseEntity<?> updateProduct(@RequestPart("product") ProductRequest product,
+                                           @RequestPart("images") MultipartFile[] images){
+        System.out.println("hello");
         System.out.println(product);
         return ResponseEntity.ok().build();
 
     }
 
     @GetMapping("/find-all")
+    @JsonView(View.ProductPagination.class)
     public ResponseEntity<?> findAll(Pageable pageable) throws IOException {
         return ResponseEntity.ok(iProductService.findAll(pageable));
     }
 
     @PostMapping("/find-all-by-type")
+    @JsonView(View.ProductPagination.class)
     public ResponseEntity<?> findAllByType(Pageable pageable, @RequestParam String type) throws IOException{
         return ResponseEntity.ok(iProductService.findAllByType(pageable,type));
     }
 
     @PostMapping("/find-one")
+    @JsonView(View.Product.class)
     public ResponseEntity<?> findByIdAndProductCode(@RequestParam String id, @RequestParam String productCode){
         Optional<Product> product=iProductService.findByIdAndProductCode(id, productCode);
         if(product.isPresent())
@@ -62,11 +69,13 @@ public class ProductController {
     }
 
     @GetMapping("/find-all-sales")
+    @JsonView(View.ProductPagination.class)
     public ResponseEntity<?> findAllSales(Pageable pageable) throws IOException{
         return ResponseEntity.ok(iProductService.findAllBySale(pageable));
     }
 
     @GetMapping("/find-all-sales-and-type")
+    @JsonView(View.ProductPagination.class)
     public ResponseEntity<?> findAllBySalesAndType(Pageable pageable, @RequestParam String type) throws IOException{
         return ResponseEntity.ok(iProductService.findAllBySaleAndType(pageable,type));
     }

@@ -1,9 +1,12 @@
 package com.anizzzz.product.sssweaterhouse.model.comment;
 
 import com.anizzzz.product.sssweaterhouse.model.user.User;
+import com.anizzzz.product.sssweaterhouse.view.View;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -20,8 +23,10 @@ public class Comment {
     private String id;
 
     @Column(columnDefinition = "text")
+    @JsonView({View.Product.class})
     private String comment;
 
+    @JsonView({View.Product.class})
     private int rate;
 
     @Column(name = "created_date")
@@ -33,6 +38,7 @@ public class Comment {
 
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonView({View.Product.class})
     private User user;
 
     public Comment(){}

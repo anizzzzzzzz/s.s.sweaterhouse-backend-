@@ -1,5 +1,7 @@
 package com.anizzzz.product.sssweaterhouse.model.product;
 
+import com.anizzzz.product.sssweaterhouse.view.View;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ public class ProductSize {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonView({View.Product.class})
     private String size;
 
     public ProductSize(){}

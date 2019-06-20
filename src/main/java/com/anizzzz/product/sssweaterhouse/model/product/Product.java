@@ -1,9 +1,12 @@
 package com.anizzzz.product.sssweaterhouse.model.product;
 
 import com.anizzzz.product.sssweaterhouse.model.comment.Comment;
+import com.anizzzz.product.sssweaterhouse.view.View;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -19,13 +22,19 @@ public class Product {
     @Id
     @GenericGenerator(name = "system_uuid", strategy = "uuid")
     @GeneratedValue(generator = "system_uuid")
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private String id;
 
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private String name;
     @Column(name = "product_code")
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private String productCode;
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private String type;
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private double price;
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private boolean sale;
 
     @Column(name = "created_date")
@@ -41,15 +50,18 @@ public class Product {
     @JoinTable(name="product_productsize",
             joinColumns = @JoinColumn(name="product_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name="size_id", referencedColumnName = "id"))
+    @JsonView({View.Product.class})
     private List<ProductSize> size = new ArrayList<>();
 
     @OneToMany(targetEntity = ProductInfo.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private List<ProductInfo> productInfos = new ArrayList<>();
 
     @OneToMany(targetEntity = Comment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     @OrderBy("createdDate DESC")
+    @JsonView({View.Product.class})
     private List<Comment> comments = new ArrayList<>();
 
     public Product(){}

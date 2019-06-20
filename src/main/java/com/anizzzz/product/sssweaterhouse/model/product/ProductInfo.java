@@ -1,5 +1,7 @@
 package com.anizzzz.product.sssweaterhouse.model.product;
 
+import com.anizzzz.product.sssweaterhouse.view.View;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,12 +21,16 @@ public class ProductInfo {
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid",
             strategy = "uuid")
+    @JsonView({View.Product.class})
     private String id;
 
+    @JsonView({View.Product.class})
     private String name;
     private String extension;
     private String type;
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private String location;
+    @JsonView({View.ProductPagination.class, View.Product.class})
     private boolean highlight;
 
     public ProductInfo(){}

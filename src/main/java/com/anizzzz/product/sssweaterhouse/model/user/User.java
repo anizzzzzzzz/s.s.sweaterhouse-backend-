@@ -28,19 +28,19 @@ public class User {
 
     @NotNull
     @NotEmpty
-    @JsonView({View.ShowUser.class})
+    @JsonView({View.ShowUser.class, View.Product.class})
     private String firstname;
-    @JsonView({View.ShowUser.class})
+    @JsonView({View.ShowUser.class, View.Product.class})
     private String middlename;
     @NotNull
     @NotEmpty
-    @JsonView({View.ShowUser.class})
+    @JsonView({View.ShowUser.class, View.Product.class})
     private String lastname;
 
     @NotNull
     @NotEmpty
     @ValidEmail
-    @JsonView({View.ShowUser.class})
+    @JsonView({View.ShowUser.class, View.Product.class})
     private String username;
 
     @NotNull

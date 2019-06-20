@@ -1,5 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.service.product;
 
+import com.anizzzz.product.sssweaterhouse.dto.ProductRequest;
 import com.anizzzz.product.sssweaterhouse.dto.ProductResponse;
 import com.anizzzz.product.sssweaterhouse.dto.ResponseMessage;
 import com.anizzzz.product.sssweaterhouse.model.product.Product;
@@ -15,7 +16,7 @@ public interface IProductService {
     ResponseMessage save(MultipartFile[] images, String name, String type, double price, boolean sale, String[] size, String selectedImage)
             throws IOException;
 
-    ResponseMessage update(MultipartFile[] imamges, Product product);
+    ResponseMessage update(MultipartFile[] images, ProductRequest productRequest);
 
     Optional<Product> findByIdAndProductCode(String id, String productCode);
 

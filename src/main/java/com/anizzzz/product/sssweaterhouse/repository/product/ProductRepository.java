@@ -24,4 +24,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAllByTypeAndPriceBetweenOrderByCreatedDateDesc(Pageable pageable, String type, double priceBegin, double priceEnd);
 
     Page<Product> findAllByTypeAndSaleAndPriceBetweenOrderByCreatedDateDesc(Pageable pageable, String type, boolean sale, double priceBegin, double priceEnd);
+
+    Long countAllByType(String type);
 }
