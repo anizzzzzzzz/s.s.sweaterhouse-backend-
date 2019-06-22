@@ -2,16 +2,11 @@ package com.anizzzz.product.sssweaterhouse.model.product;
 
 import com.anizzzz.product.sssweaterhouse.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "product_size")
-@Data
-@AllArgsConstructor
 public class ProductSize {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +19,17 @@ public class ProductSize {
 
     public ProductSize(String size){
         this.size=size;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }

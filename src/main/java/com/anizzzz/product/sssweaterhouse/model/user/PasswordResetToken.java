@@ -1,8 +1,6 @@
 package com.anizzzz.product.sssweaterhouse.model.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,8 +8,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "password_reset_token")
-@Data
-@AllArgsConstructor
 public class PasswordResetToken{
     @Id
     @GeneratedValue(generator="system-uuid")
@@ -34,5 +30,33 @@ public class PasswordResetToken{
         this.token=token;
         this.expiryDate=expiryDate;
         this.user = user;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
     }
 }

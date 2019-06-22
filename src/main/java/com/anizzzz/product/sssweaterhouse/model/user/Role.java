@@ -1,15 +1,10 @@
 package com.anizzzz.product.sssweaterhouse.model.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name="role")
-@Data
-@AllArgsConstructor
 public class Role implements Serializable {
     private static final long serialVersionUID =243509823490109483L;
 
@@ -22,5 +17,17 @@ public class Role implements Serializable {
 
     public Role(String name){
         this.name=name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

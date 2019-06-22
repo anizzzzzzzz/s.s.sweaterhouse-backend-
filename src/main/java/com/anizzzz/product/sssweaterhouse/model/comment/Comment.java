@@ -4,9 +4,6 @@ import com.anizzzz.product.sssweaterhouse.model.user.User;
 import com.anizzzz.product.sssweaterhouse.view.View;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -14,8 +11,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "comment")
-@Data
-@AllArgsConstructor
 public class Comment {
     @Id
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
@@ -48,6 +43,50 @@ public class Comment {
         this.rate = rate;
         this.createdDate = createdDate;
         this.updatedDate = createdDate;
+        this.user = user;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public int getRate() {
+        return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
         this.user = user;
     }
 }

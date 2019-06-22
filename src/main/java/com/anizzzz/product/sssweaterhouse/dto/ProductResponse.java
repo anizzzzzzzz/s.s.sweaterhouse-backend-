@@ -2,14 +2,10 @@ package com.anizzzz.product.sssweaterhouse.dto;
 
 import com.anizzzz.product.sssweaterhouse.model.product.ProductSize;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 import java.util.HashMap;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ProductResponse {
     private String name;
@@ -21,6 +17,8 @@ public class ProductResponse {
     private String imageType;
     private List<HashMap<String,Object>> images;
     private boolean sale;
+
+    public ProductResponse(){}
 
     public ProductResponse(String name,
                            String productCode,
@@ -53,5 +51,77 @@ public class ProductResponse {
         this.price=price;
         this.size=size;
         this.images=images;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public List<ProductSize> getSize() {
+        return size;
+    }
+
+    public void setSize(List<ProductSize> size) {
+        this.size = size;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
+    }
+
+    public List<HashMap<String, Object>> getImages() {
+        return images;
+    }
+
+    public void setImages(List<HashMap<String, Object>> images) {
+        this.images = images;
+    }
+
+    public boolean isSale() {
+        return sale;
+    }
+
+    public void setSale(boolean sale) {
+        this.sale = sale;
     }
 }

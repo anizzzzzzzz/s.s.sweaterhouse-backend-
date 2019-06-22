@@ -2,9 +2,6 @@ package com.anizzzz.product.sssweaterhouse.model.product;
 
 import com.anizzzz.product.sssweaterhouse.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
@@ -14,8 +11,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "product_info")
-@Data
-@AllArgsConstructor
 public class ProductInfo {
     @Id
     @GeneratedValue(generator="system-uuid")
@@ -41,5 +36,49 @@ public class ProductInfo {
         this.type=type;
         this.location=location;
         this.highlight=highlight;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public boolean isHighlight() {
+        return highlight;
+    }
+
+    public void setHighlight(boolean highlight) {
+        this.highlight = highlight;
     }
 }
