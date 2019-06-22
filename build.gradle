@@ -71,4 +71,3 @@ bootJar {
 	mainClassName = 'com.anizzzz.product.sssweaterhouse.Application'
 }
 
-

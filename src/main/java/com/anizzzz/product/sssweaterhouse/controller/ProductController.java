@@ -40,10 +40,18 @@ public class ProductController {
     @PostMapping(value = "/update-product", consumes = {"multipart/form-data"})
     public ResponseEntity<?> updateProduct(@RequestPart("product") ProductRequest product,
                                            @RequestPart("images") MultipartFile[] images){
-        System.out.println("hello");
-        System.out.println(product);
-        return ResponseEntity.ok().build();
+        ResponseMessage response = iProductService.update(images, product);
+        return new ResponseEntity<>(response, response.getHttpStatus());
 
+    }
+
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") String id){
+        boolean deleted = iProductService.deleteProduct(id);
+        if(deleted)
+            return new ResponseEntity<>("Successfully deleted a product", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Cannot find product. Cannot execute process", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/find-all")

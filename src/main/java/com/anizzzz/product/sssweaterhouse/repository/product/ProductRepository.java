@@ -11,19 +11,17 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, String> {
     Optional<Product> findByIdAndProductCode(String id, String productCode);
 
-    Page<Product> findAllByOrderByCreatedDateDesc(Pageable pageable);
-
-    Page<Product> findAllBySaleOrderByCreatedDateDesc(Pageable pageable, boolean sale);
+    Page<Product> findAllBySale(Pageable pageable, boolean sale);
 
     List<Product> findAllByType(String type);
 
-    Page<Product> findAllByTypeOrderByCreatedDateDesc(Pageable pageable,String type);
+    Page<Product> findAllByType(Pageable pageable,String type);
 
-    Page<Product> findAllBySaleAndTypeOrderByCreatedDateDesc(Pageable pageable, boolean sale, String type);
+    Page<Product> findAllBySaleAndType(Pageable pageable, boolean sale, String type);
 
-    Page<Product> findAllByTypeAndPriceBetweenOrderByCreatedDateDesc(Pageable pageable, String type, double priceBegin, double priceEnd);
+    Page<Product> findAllByTypeAndPriceBetween(Pageable pageable, String type, double priceBegin, double priceEnd);
 
-    Page<Product> findAllByTypeAndSaleAndPriceBetweenOrderByCreatedDateDesc(Pageable pageable, String type, boolean sale, double priceBegin, double priceEnd);
+    Page<Product> findAllByTypeAndSaleAndPriceBetween(Pageable pageable, String type, boolean sale, double priceBegin, double priceEnd);
 
     Long countAllByType(String type);
 }

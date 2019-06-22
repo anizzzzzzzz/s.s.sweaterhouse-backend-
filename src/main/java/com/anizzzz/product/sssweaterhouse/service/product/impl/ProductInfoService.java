@@ -21,4 +21,14 @@ public class ProductInfoService implements IProductInfoService {
     public Optional<ProductInfo> findByName(String name) {
         return productInfoRepository.findByName(name);
     }
+
+    @Override
+    public Optional<ProductInfo> findById(String id) {
+        return productInfoRepository.findById(id);
+    }
+
+    @Override
+    public void deleteAllIfProductIdIsNull() {
+        productInfoRepository.deleteAllIfProductIdIsNull();
+    }
 }

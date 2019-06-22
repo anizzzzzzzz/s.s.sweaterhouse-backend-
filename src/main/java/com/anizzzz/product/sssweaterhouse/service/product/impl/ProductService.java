@@ -71,6 +71,168 @@ public class ProductService implements IProductService {
         return new ResponseMessage("Product have been saved successfully.", HttpStatus.OK);
     }
 
+    @Override
+    public ResponseMessage update(MultipartFile[] images, ProductRequest productRequest) {
+        Optional<Product> productOptional = findByIdAndProductCode(productRequest.getId(),
+                productRequest.getProductCode());
+
+        if(productOptional.isPresent()){
+            Product product = productOptional.get();
+
+            String folderLocation=System.getProperty("user.dir") + "/images/"+ product.getType();
+            File imageFolder = new File(folderLocation);
+            if (!imageFolder.exists())
+                imageFolder.mkdirs();
+
+            // Deleting the ProductInfos selected by user.
+            productRequest.getDeletedImagesId().forEach(id -> {
+                iProductInfoService.findById(id)
+                        .ifPresent(productInfo -> product.getProductInfos().remove(productInfo));
+            });
+            saveImages(product.getProductInfos(),
+                    images, productRequest.getSelectedImage(), folderLocation, product.getType());
+
+            // If selected Image isn't newly added images, then selected image will be id.
+            // So, if it is id, then setting that image as highlight.
+            if(!productRequest.getSelectedImage().contains(".jpeg") ||
+                    !productRequest.getSelectedImage().contains(".png") ||
+                    !productRequest.getSelectedImage().contains(".jpg")){
+                product.getProductInfos().forEach(productInfo -> {
+                    if (productInfo.getName().equalsIgnoreCase(productRequest.getSelectedImage()))
+                        productInfo.setHighlight(true);
+                    else
+                        productInfo.setHighlight(false);
+                });
+            }
+
+            // Updating product
+            product.setName(productRequest.getName());
+            product.setUpdatedDate(new Date());
+            product.setPrice(productRequest.getPrice());
+            product.setSale(productRequest.isSale());
+
+            // updating size
+            product.setSize(
+                    productRequest.getSize().stream()
+                            .map(iProductSizeService::findBySize)
+                            .collect(Collectors.toList())
+            );
+            productRepository.save(product);
+            return new ResponseMessage("Successfully updated the product.", HttpStatus.OK);
+        }
+
+        return new ResponseMessage("Cannot find product. Sorry, cannot execute operation", HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    public boolean deleteProduct(String id) {
+        Optional<Product> productOptional = productRepository.findById(id);
+        if(productOptional.isPresent()){
+            Product product = productOptional.get();
+            product.setSize(null);
+            product.setComments(null);
+
+            // deleting the image file first
+            product.getProductInfos().forEach(productInfo ->
+                    new File(System.getProperty("user.dir") + "/images/" + productInfo.getLocation()).delete());
+            product.setProductInfos(null);
+
+            productRepository.save(product);
+
+            iProductInfoService.deleteAllIfProductIdIsNull();
+            productRepository.delete(product);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Optional<Product> findByIdAndProductCode(String id, String productCode) {
+        return productRepository.findByIdAndProductCode(id, productCode);
+    }
+
+    @Override
+    public Page<Product> findAll(Pageable pageable) throws IOException {
+//        Page<Product> products=productRepository.findAllByOrderByCreatedDateDesc(pageable);
+//        return getProductResponse(products);
+        return productRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Product> findAllBySale(Pageable pageable) throws IOException {
+        /*Page<Product> products=productRepository.findAllBySaleOrderByCreatedDateDesc(pageable,true);
+        return getProductResponse(products);*/
+        return productRepository.findAllBySale(pageable,true);
+    }
+
+    @Override
+    public Page<Product> findAllByType(Pageable pageable, String type) throws IOException {
+        return productRepository.findAllByType(pageable,type);
+    }
+
+    @Override
+    public Page<Product> findAllBySaleAndType(Pageable pageable, String type) throws IOException {
+        return productRepository.findAllBySaleAndType(pageable,true,type);
+    }
+
+    @Override
+    public Page<Product> findAllByTypeAndPriceBetween(Pageable pageable, String type, double priceBegin, double priceEnd)
+            throws IOException {
+        return productRepository.findAllByTypeAndPriceBetween
+                (pageable,
+                        type,
+                        priceBegin,
+                        priceEnd
+                );
+    }
+
+    @Override
+    public Page<Product> findAllByTypeAndSaleAndPriceBetween(Pageable pageable, String type, boolean sale, double priceBegin, double priceEnd) throws IOException {
+        return productRepository.findAllByTypeAndSaleAndPriceBetween(
+                pageable,
+                type,
+                true,
+                priceBegin,
+                priceEnd
+        );
+    }
+
+    private String getProductCode(String type){
+        Long index = productRepository.countAllByType(type);
+
+        if(type.equalsIgnoreCase("sweater")){
+            return "SWT-" + Long.toString(index + 1);
+        }
+        else if(type.equalsIgnoreCase("Handwarmer")) {
+            return "HNW-" + Long.toString(index + 1);
+        }
+        else if(type.equalsIgnoreCase("Jacket")) {
+            return "JCK-" + Long.toString(index + 1);
+        }
+        else if(type.equalsIgnoreCase("Shock")){
+            return "SCK-" + Long.toString(index + 1);
+        }
+        else if(type.equalsIgnoreCase("Trouser")){
+            return "TRS-" + Long.toString(index + 1);
+        }
+        else{
+            return "OTHER-" +  Long.toString(index + 1);
+        }
+    }
+
+    private String getRandomFileName(String extension){
+        return UUID.randomUUID().toString() +"."+ extension;
+    }
+
+    private String imageType(String extension){
+        if(extension.equalsIgnoreCase("jpg"))
+            return MediaType.IMAGE_JPEG_VALUE;
+        else if(extension.equalsIgnoreCase("png"))
+            return MediaType.IMAGE_PNG_VALUE;
+        else
+            return null;
+    }
+
     private void saveImages(List<ProductInfo> productInfos, MultipartFile[] mFiles,
                             String selectedImage, String folderLocation, String type){
         int i=0;
@@ -86,6 +248,7 @@ public class ProductService implements IProductService {
                         if(selectedImage.endsWith(".jpeg") || selectedImage.endsWith(".png")
                                 || selectedImage.endsWith(".jpg")) {
                             if (selectedImage.equalsIgnoreCase(image.getOriginalFilename())){
+                                System.out.println("true");
                                 isSelected = true;
                                 productInfos.forEach(prod -> prod.setHighlight(false));
                             }
@@ -134,117 +297,5 @@ public class ProductService implements IProductService {
                 throw new ExtensionMismatchException();
             }
         }
-    }
-
-    @Override
-    public ResponseMessage update(MultipartFile[] images, ProductRequest productRequest) {
-        Optional<Product> productOptional = findByIdAndProductCode(productRequest.getId(),
-                productRequest.getProductCode());
-
-        if(productOptional.isPresent()){
-            Product product = productOptional.get();
-
-            String folderLocation=System.getProperty("user.dir") + "/images/"+ product.getType();
-            File imageFolder = new File(folderLocation);
-            if (!imageFolder.exists())
-                imageFolder.mkdirs();
-
-            // Deleting the ProductInfos selected by user.
-//            product.getProductInfos().remo
-        }
-
-        return null;
-    }
-
-    @Override
-    public Optional<Product> findByIdAndProductCode(String id, String productCode) {
-        return productRepository.findByIdAndProductCode(id, productCode);
-    }
-
-    @Override
-    public List<Product> findAllByType(String type) {
-        return productRepository.findAllByType(type);
-    }
-
-    @Override
-    public Page<Product> findAll(Pageable pageable) throws IOException {
-//        Page<Product> products=productRepository.findAllByOrderByCreatedDateDesc(pageable);
-//        return getProductResponse(products);
-        return productRepository.findAllByOrderByCreatedDateDesc(pageable);
-    }
-
-    @Override
-    public Page<Product> findAllBySale(Pageable pageable) throws IOException {
-        /*Page<Product> products=productRepository.findAllBySaleOrderByCreatedDateDesc(pageable,true);
-        return getProductResponse(products);*/
-        return productRepository.findAllBySaleOrderByCreatedDateDesc(pageable,true);
-    }
-
-    @Override
-    public Page<Product> findAllByType(Pageable pageable, String type) throws IOException {
-        return productRepository.findAllByTypeOrderByCreatedDateDesc(pageable,type);
-    }
-
-    @Override
-    public Page<Product> findAllBySaleAndType(Pageable pageable, String type) throws IOException {
-        return productRepository.findAllBySaleAndTypeOrderByCreatedDateDesc(pageable,true,type);
-    }
-
-    @Override
-    public Page<Product> findAllByTypeAndPriceBetween(Pageable pageable, String type, double priceBegin, double priceEnd)
-            throws IOException {
-        return productRepository.findAllByTypeAndPriceBetweenOrderByCreatedDateDesc
-                (pageable,
-                        type,
-                        priceBegin,
-                        priceEnd
-                );
-    }
-
-    @Override
-    public Page<Product> findAllByTypeAndSaleAndPriceBetween(Pageable pageable, String type, boolean sale, double priceBegin, double priceEnd) throws IOException {
-        return productRepository.findAllByTypeAndSaleAndPriceBetweenOrderByCreatedDateDesc(
-                pageable,
-                type,
-                true,
-                priceBegin,
-                priceEnd
-        );
-    }
-
-    private String getProductCode(String type){
-        Long index = productRepository.countAllByType(type);
-
-        if(type.equalsIgnoreCase("sweater")){
-            return "SWT-" + Long.toString(index + 1);
-        }
-        else if(type.equalsIgnoreCase("Handwarmer")) {
-            return "HNW-" + Long.toString(index + 1);
-        }
-        else if(type.equalsIgnoreCase("Jacket")) {
-            return "JCK-" + Long.toString(index + 1);
-        }
-        else if(type.equalsIgnoreCase("Shock")){
-            return "SCK-" + Long.toString(index + 1);
-        }
-        else if(type.equalsIgnoreCase("Trouser")){
-            return "TRS-" + Long.toString(index + 1);
-        }
-        else{
-            return "OTHER-" +  Long.toString(index + 1);
-        }
-    }
-
-    private String getRandomFileName(String extension){
-        return UUID.randomUUID().toString() +"."+ extension;
-    }
-
-    private String imageType(String extension){
-        if(extension.equalsIgnoreCase("jpg"))
-            return MediaType.IMAGE_JPEG_VALUE;
-        else if(extension.equalsIgnoreCase("png"))
-            return MediaType.IMAGE_PNG_VALUE;
-        else
-            return null;
     }
 }

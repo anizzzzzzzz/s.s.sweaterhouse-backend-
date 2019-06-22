@@ -26,6 +26,7 @@ public class Comment {
 
     @Column(name = "created_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
+    @JsonView({View.Product.class})
     private Date createdDate;
     @Column(name = "updated_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")

@@ -6,4 +6,8 @@ import java.util.Optional;
 
 public interface IProductInfoService {
     Optional<ProductInfo> findByName(String name);
+
+    Optional<ProductInfo> findById(String id);
+
+    void deleteAllIfProductIdIsNull();
 }

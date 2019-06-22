@@ -18,9 +18,9 @@ public interface IProductService {
 
     ResponseMessage update(MultipartFile[] images, ProductRequest productRequest);
 
-    Optional<Product> findByIdAndProductCode(String id, String productCode);
+    boolean deleteProduct(String id);
 
-    List<Product> findAllByType(String type);
+    Optional<Product> findByIdAndProductCode(String id, String productCode);
 
     Page<Product> findAll(Pageable pageable) throws IOException;
 
